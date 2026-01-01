@@ -1,3 +1,13 @@
+"""
+Example: Memory Demo
+
+To run this example, first install the aiwork package:
+    pip install -e .
+
+Then run:
+    python examples/memory_demo.py
+"""
+
 from aiwork.core.agent import Agent
 from aiwork.core.task import Task
 from aiwork.core.flow import Flow

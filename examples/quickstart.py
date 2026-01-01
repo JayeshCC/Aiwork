@@ -1,8 +1,12 @@
-import sys
-import os
+"""
+Example: Quickstart
 
-# Add src to path so we can import aiwork without installing it
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+To run this example, first install the aiwork package:
+    pip install -e .
+
+Then run:
+    python examples/quickstart.py
+"""
 
 from aiwork.core.task import Task
 from aiwork.core.flow import Flow
