@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiwork"
+version = "0.1.0"
+description = "Lightweight AI Agent Framework optimized for Intel hardware"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "JayeshCC", email = "jayesh@example.com"}
+]
+keywords = ["ai", "agents", "workflow", "intel", "openvino", "orchestration"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn>=0.24.0",
+    "numpy>=1.26.0",
+    "pydantic>=2.0.0",
+    "confluent-kafka>=2.3.0",
+    "redis>=5.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+intel = [
+    "openvino>=2024.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/JayeshCC/Aiwork"
+Repository = "https://github.com/JayeshCC/Aiwork"
+Issues = "https://github.com/JayeshCC/Aiwork/issues"
+
+[project.scripts]
+aiwork-server = "aiwork.api.server:start_server"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=src/aiwork --cov-report=html --cov-report=term"
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+)/
+'''

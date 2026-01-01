@@ -1,9 +1,14 @@
-import sys
-import os
-import time
+"""
+Example: Customer Support Agent
 
-# Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
+To run this example, first install the aiwork package:
+    pip install -e .
+
+Then run:
+    python examples/agents/customer_support/run.py
+"""
+
+import time
 
 from aiwork.core.task import Task
 from aiwork.core.flow import Flow

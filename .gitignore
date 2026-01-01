@@ -1,7 +1,25 @@
-# Python artifacts
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Virtual environments
 .venv/
@@ -9,20 +27,34 @@ venv/
 ENV/
 env/
 
-# Pytest cache
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
 .pytest_cache/
-
-# Coverage
 .coverage
-.coverage.*
 htmlcov/
+.tox/
 
-# Build artifacts
-build/
-dist/
-*.egg-info/
-.eggs/
-pip-wheel-metadata/
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+models/
+data/
+
+# Example-generated files
+airflow_dag_export.py
 
 # Type checker / linter caches
 .mypy_cache/
@@ -30,17 +62,6 @@ pip-wheel-metadata/
 .pytype/
 .pyre/
 .cache/
-
-# Example-generated files
-airflow_dag_export.py
-
-# IDE/editor
-.vscode/
-.idea/
-
-# OS junk
-.DS_Store
-Thumbs.db
 
 #AI assistant files
 GEMINI.md
