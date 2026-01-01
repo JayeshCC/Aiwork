@@ -5,10 +5,22 @@ class Task:
     """
     Atomic unit of work in the AIWork framework.
     """
-    def __init__(self, name: str, description: str, agent: Optional['Agent'] = None, handler: Callable[[Dict[str, Any]], Any] = None, retries: int = 3, guardrails: list = None):
+    def __init__(
+        self,
+        name: str,
+        description: Optional[str] = None,
+        agent: Optional['Agent'] = None,
+        handler: Callable[[Dict[str, Any]], Any] = None,
+        retries: int = 3,
+        guardrails: list = None,
+    ):
         self.id = str(uuid.uuid4())
         self.name = name
-        self.description = description
+        # Backward compatibility: allow Task(name, handler) signature.
+        if callable(description) and handler is None:
+            handler = description
+            description = None
+        self.description = description or name
         self.agent = agent
         self.handler = handler
         self.retries = retries
