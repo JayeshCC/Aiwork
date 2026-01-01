@@ -1424,6 +1424,105 @@ A: The core framework is production-ready and tested. However:
 
 See [roadmap](ROADMAP.md) for full implementation timeline.
 
+**Q: Wait, OpenVINO and Kafka are stubs? What does that mean?**
+
+A: Yes, and this is **intentional**! Here's what it means:
+
+**OpenVINO Adapter** (Stub):
+- ✅ Interface is defined and working
+- ✅ Shows how to integrate OpenVINO
+- ✅ Demonstrates performance patterns
+- ❌ Doesn't compile real models (yet)
+- ❌ Doesn't perform hardware acceleration (yet)
+
+**Kafka Adapter** (Stub):
+- ✅ Interface is defined and working
+- ✅ Shows how distributed processing works
+- ✅ Returns mock data for testing
+- ❌ Doesn't connect to real Kafka (yet)
+- ❌ Doesn't distribute across workers (yet)
+
+**Redis State Manager** (Partial):
+- ✅ Local storage fully functional
+- ✅ Interface for Redis defined
+- ❌ Redis integration not implemented (yet)
+
+**Why stubs?** We shipped v0.1.0 with clear interfaces to:
+1. Get community feedback early
+2. Keep dependencies minimal
+3. Focus on core framework quality
+4. Meet Intel Challenge deadline
+5. Provide clear upgrade path
+
+**Full details**: See [MOCK_IMPLEMENTATIONS.md](MOCK_IMPLEMENTATIONS.md)
+
+**Q: Are the benchmarks real or simulated?**
+
+A: **Current benchmarks are simulated** for v0.1.0:
+- OpenVINO integration is a stub, so we simulate the expected 3.7x speedup
+- Core framework performance (task execution, memory operations) is real
+- Real benchmarks will be published after OpenVINO implementation (Q1 2025)
+
+We're transparent about this in [BENCHMARKS.md](BENCHMARKS.md). The simulated results are based on:
+- Published OpenVINO benchmark data
+- Conservative estimates
+- Real hardware capabilities
+
+**Real benchmarks coming**: March 2025 on Intel DevCloud hardware.
+
+**Q: When will the real implementations be ready?**
+
+A: **Clear timeline** for Phase 1 (Real Integrations):
+
+| Component | Timeline | Status |
+|-----------|----------|--------|
+| OpenVINO | Week 1-3 (Jan-Feb 2025) | 🟡 Planning |
+| Kafka | Week 4-5 (Feb 2025) | 🟡 Planning |
+| Redis | Week 6 (Feb 2025) | 🟡 Planning |
+| **All Complete** | **March 2025 (v0.5.0)** | **🎯 Target** |
+
+**Total effort**: ~6 weeks for full production implementations.
+
+**Contributing?** We welcome help! See [CONTRIBUTING.md](../CONTRIBUTING.md)
+
+**Q: Can I use AIWork in production today despite the stubs?**
+
+A: **Yes, absolutely!** Here's how:
+
+**Production-Ready Today** (no changes needed):
+- ✅ Core framework (Agents, Tasks, Flows)
+- ✅ REST API server
+- ✅ Local state management
+- ✅ Vector memory
+- ✅ Guardrails
+- ✅ Observability
+
+**Workarounds for Stubs**:
+- **Instead of OpenVINO**: Use native model inference (PyTorch, TensorFlow)
+- **Instead of Kafka**: Use REST API for job submission
+- **Instead of Redis**: Use local state (works for single-instance)
+
+**Migration Path**:
+- Start with production-ready components now
+- Plan upgrade to real integrations in Q1 2025
+- We'll provide migration guides and backward compatibility
+
+**Full guide**: See [PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md) for step-by-step instructions.
+
+**Q: How do I know what's production-ready vs. stub?**
+
+A: Check these resources:
+
+1. **[MOCK_IMPLEMENTATIONS.md](MOCK_IMPLEMENTATIONS.md)**: Complete transparency about every component
+2. **[PRODUCTION_GUIDE.md](PRODUCTION_GUIDE.md)**: Migration steps for stubs
+3. **Source code**: All stubs have clear comments like `# Real implementation would use:`
+4. **This FAQ**: Summary of component status
+
+**Quick Reference**:
+- ✅ = Production-ready (use with confidence)
+- ⚠️ = Partial/Stub (understand limitations)
+- ❌ = Not implemented (coming soon)
+
 **Q: How does AIWork compare to LangChain/CrewAI?**
 
 A: 
@@ -1575,6 +1674,8 @@ Now that you understand AIWork, here's what to do next:
 
 - [Architecture Guide](ARCHITECTURE.md) - System internals
 - [API Reference](API_REFERENCE.md) - Detailed API docs
+- [Mock Implementations](MOCK_IMPLEMENTATIONS.md) - **Transparency about stubs vs. production**
+- [Production Guide](PRODUCTION_GUIDE.md) - **Migration steps for real integrations**
 - [Benchmarks](BENCHMARKS.md) - Performance data
 - [Roadmap](ROADMAP.md) - Future plans
 - [GitHub Repo](https://github.com/JayeshCC/Aiwork) - Source code
