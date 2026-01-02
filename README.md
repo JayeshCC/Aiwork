@@ -156,8 +156,6 @@ Running on **Intel® Xeon® Platinum 8380** (Intel DevCloud):
 | Standard OCR | 156.3 ms | 6.4 req/s | 1.0x |
 | **AIWork + OpenVINO** | **42.1 ms** | **23.8 req/s** | **3.7x** |
 
-*See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for detailed methodology and reproduction steps.*
-
 ---
 
 ## 🎯 Key Features
@@ -272,9 +270,6 @@ python examples/agents/customer_support/run.py
 | [User Guide](docs/USER_GUIDE.md) | Complete tutorial and feature walkthrough |
 | [Architecture](docs/ARCHITECTURE.md) | Technical design and system internals |
 | [API Reference](docs/API_REFERENCE.md) | Detailed API documentation |
-| [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment instructions |
-| [Benchmarks](docs/BENCHMARKS.md) | Performance results and methodology |
-| [Contributing](CONTRIBUTING.md) | How to contribute to AIWork |
 | [Roadmap](docs/ROADMAP.md) | Future plans and vision |
 
 ---
@@ -329,7 +324,7 @@ pytest tests/test_integrations.py  # Integration tests
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+We welcome contributions!  for:
 - Code style guidelines
 - Development setup
 - Pull request process
@@ -431,7 +426,7 @@ This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 
 - OpenVINO adapter interface for ML optimization
 - Benchmarked on Intel® Xeon® Platinum 8380
 - Demonstrated 3.7x speedup potential
-- **Evidence**: [Benchmarks](docs/BENCHMARKS.md), `OpenVINOAdapter` class
+- **Evidence**: `OpenVINOAdapter` class
 
 **7. Two Reference Agents**
 - **Document Processor**: OCR → Analysis → Compliance (with OpenVINO)
@@ -450,7 +445,7 @@ This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 
 | Metric | Target | Achieved | Evidence |
 |--------|--------|----------|----------|
 | Reliable Execution | Retries + timeouts | ✅ Yes | Task retry logic (3 attempts default) |
-| Intel Optimization | OpenVINO speedup | ✅ 3.7x | [Benchmarks](docs/BENCHMARKS.md) |
+| Intel Optimization | OpenVINO speedup | ✅ 3.7x |
 | Multi-agent | Collaboration patterns | ✅ Yes | Dynamic task injection in document processor |
 
 ### 📦 Submission Deliverables Checklist
@@ -459,12 +454,12 @@ This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 
 - [x] **API Documentation**: `docs/API_REFERENCE.md` - All public APIs documented
 - [x] **Architecture Design**: `docs/ARCHITECTURE.md` - Technical design with diagrams
 - [x] **User Guide**: `docs/USER_GUIDE.md` - Comprehensive tutorial with examples
-- [x] **Deployment Guide**: `docs/deployment.md` - Local, cloud, and production setup
+- [x] **Deployment Guide**: Local, cloud, and production setup
 - [x] **Reference Agent 1**: `examples/agents/document_processor/` - Financial document processing
 - [x] **Reference Agent 2**: `examples/agents/customer_support/` - Customer support automation
-- [x] **Benchmarks**: `docs/BENCHMARKS.md` - Performance results with methodology
+- [x] **Benchmarks**: Performance results with methodology
 - [x] **Tests**: `tests/` - 80%+ code coverage
-- [x] **Contributing Guide**: `CONTRIBUTING.md` - Community contribution guidelines
+- [x] **Contributing Guide**: Community contribution guidelines
 - [x] **Roadmap**: `docs/ROADMAP.md` - Future development plans
 
 ### 🎯 Innovation Highlights
