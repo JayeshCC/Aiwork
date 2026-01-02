@@ -11,20 +11,20 @@ AIWork is a lightweight, production-ready Python framework for building intellig
 
 ---
 
-## 🌟 Why AIWork?
+## Why AIWork?
 
-- ✅ **Lightweight & Fast**: Minimal dependencies, maximum performance
-- ✅ **Agent-Centric Design**: Define AI workers with roles, goals, and tools
-- ✅ **Hybrid Orchestration**: Static DAGs + dynamic task injection
-- ✅ **Intel Optimized**: Built-in OpenVINO integration for 3.7x speedup
-- ✅ **Production Ready**: Retry logic, guardrails, state management
-- ✅ **Framework-Agnostic**: No vendor lock-in, build your own patterns
-- ✅ **Apache Integration**: Kafka messaging, Airflow DAG export
-- ✅ **Developer Friendly**: Clear APIs, extensive examples, great docs
+- **Lightweight & Fast**: Minimal dependencies, maximum performance
+- **Agent-Centric Design**: Define AI workers with roles, goals, and tools
+- **Hybrid Orchestration**: Static DAGs + dynamic task injection
+- **Intel Optimized**: Built-in OpenVINO integration for 3.7x speedup
+- **Production Ready**: Retry logic, guardrails, state management
+- **Framework-Agnostic**: No vendor lock-in, build your own patterns
+- **Apache Integration**: Kafka messaging, Airflow DAG export
+- **Developer Friendly**: Clear APIs, extensive examples, great docs
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TD
@@ -51,7 +51,7 @@ graph TD
 
 ---
 
-## 📋 Intel AI Innovation Challenge 2024 - Problem Statement Alignment
+## Intel AI Innovation Challenge 2025-26 - Problem Statement Alignment
 
 AIWork directly addresses **Problem 2: Build-Your-Own AI Agent Framework** requirements:
 
@@ -391,15 +391,9 @@ These limitations are documented in our [roadmap](docs/ROADMAP.md) with plans fo
 
 ---
 
-## 📄 License
+## 🏆 Intel AI Innovation Challenge 2025-26 - Submission Summary
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 🏆 Intel AI Innovation Challenge 2024 - Submission Summary
-
-This project is built for the **Intel AI Innovation Challenge 2024 - Problem 2: Build-Your-Own AI Agent Framework**.
+This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 2: Build-Your-Own AI Agent Framework**.
 
 ### ✅ Core Requirements Met
 
@@ -528,5 +522,5 @@ Built with:
 <div align="center">
   <strong>⭐ If you find AIWork useful, please star this repository! ⭐</strong>
   <br><br>
-  <sub>Built with ❤️ for the Intel AI Innovation Challenge 2024</sub>
+  <sub>Built with ❤️ for the Intel AI Innovation Challenge 2025-26</sub>
 </div>
