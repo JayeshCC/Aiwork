@@ -13,14 +13,14 @@ AIWork is a lightweight, production-ready Python framework for building intellig
 
 ## 🌟 Why AIWork?
 
-- ✅ **Lightweight & Fast**: Minimal dependencies, maximum performance
-- ✅ **Agent-Centric Design**: Define AI workers with roles, goals, and tools
-- ✅ **Hybrid Orchestration**: Static DAGs + dynamic task injection
-- ✅ **Intel Optimized**: Built-in OpenVINO integration for 3.7x speedup
-- ✅ **Production Ready**: Retry logic, guardrails, state management
-- ✅ **Framework-Agnostic**: No vendor lock-in, build your own patterns
-- ✅ **Apache Integration**: Kafka messaging, Airflow DAG export
-- ✅ **Developer Friendly**: Clear APIs, extensive examples, great docs
+- **Lightweight & Fast**: Minimal dependencies, maximum performance
+- **Agent-Centric Design**: Define AI workers with roles, goals, and tools
+- **Hybrid Orchestration**: Static DAGs + dynamic task injection
+- **Intel Optimized**: Built-in OpenVINO integration for 3.7x speedup
+- **Production Ready**: Retry logic, guardrails, state management
+- **Framework-Agnostic**: No vendor lock-in, build your own patterns
+- **Apache Integration**: Kafka messaging, Airflow DAG export
+- **Developer Friendly**: Clear APIs, extensive examples, great docs
 
 ---
 
@@ -51,7 +51,7 @@ graph TD
 
 ---
 
-## 📋 Intel AI Innovation Challenge 2024 - Problem Statement Alignment
+## 📋 Intel AI Innovation Challenge 2025-26 - Problem Statement Alignment
 
 AIWork directly addresses **Problem 2: Build-Your-Own AI Agent Framework** requirements:
 
@@ -140,25 +140,6 @@ python examples/quickstart.py
 
 ---
 
-## 📊 Performance Benchmarks
-
-Running on **Intel® Xeon® Platinum 8380** (Intel DevCloud):
-
-### Text Classification (DistilBERT)
-| Framework | Avg Latency | Throughput | Speedup |
-|-----------|-------------|------------|---------|
-| PyTorch (Baseline) | 45.2 ms | 22.1 req/s | 1.0x |
-| **AIWork + OpenVINO** | **12.1 ms** | **82.6 req/s** | **3.7x** |
-
-### OCR Model
-| Framework | Avg Latency | Throughput | Speedup |
-|-----------|-------------|------------|---------|
-| Standard OCR | 156.3 ms | 6.4 req/s | 1.0x |
-| **AIWork + OpenVINO** | **42.1 ms** | **23.8 req/s** | **3.7x** |
-
-*See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) for detailed methodology and reproduction steps.*
-
----
 
 ## 🎯 Key Features
 
@@ -272,9 +253,6 @@ python examples/agents/customer_support/run.py
 | [User Guide](docs/USER_GUIDE.md) | Complete tutorial and feature walkthrough |
 | [Architecture](docs/ARCHITECTURE.md) | Technical design and system internals |
 | [API Reference](docs/API_REFERENCE.md) | Detailed API documentation |
-| [Deployment Guide](docs/DEPLOYMENT.md) | Production deployment instructions |
-| [Benchmarks](docs/BENCHMARKS.md) | Performance results and methodology |
-| [Contributing](CONTRIBUTING.md) | How to contribute to AIWork |
 | [Roadmap](docs/ROADMAP.md) | Future plans and vision |
 
 ---
@@ -329,7 +307,7 @@ pytest tests/test_integrations.py  # Integration tests
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+We welcome contributions! for:
 - Code style guidelines
 - Development setup
 - Pull request process
@@ -391,15 +369,9 @@ These limitations are documented in our [roadmap](docs/ROADMAP.md) with plans fo
 
 ---
 
-## 📄 License
+## 🏆 Intel AI Innovation Challenge 2025-26 - Submission Summary
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 🏆 Intel AI Innovation Challenge 2024 - Submission Summary
-
-This project is built for the **Intel AI Innovation Challenge 2024 - Problem 2: Build-Your-Own AI Agent Framework**.
+This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 2: Build-Your-Own AI Agent Framework**.
 
 ### ✅ Core Requirements Met
 
@@ -437,7 +409,7 @@ This project is built for the **Intel AI Innovation Challenge 2024 - Problem 2: 
 - OpenVINO adapter interface for ML optimization
 - Benchmarked on Intel® Xeon® Platinum 8380
 - Demonstrated 3.7x speedup potential
-- **Evidence**: [Benchmarks](docs/BENCHMARKS.md), `OpenVINOAdapter` class
+- **Evidence**: `OpenVINOAdapter` class
 
 **7. Two Reference Agents**
 - **Document Processor**: OCR → Analysis → Compliance (with OpenVINO)
@@ -456,7 +428,7 @@ This project is built for the **Intel AI Innovation Challenge 2024 - Problem 2: 
 | Metric | Target | Achieved | Evidence |
 |--------|--------|----------|----------|
 | Reliable Execution | Retries + timeouts | ✅ Yes | Task retry logic (3 attempts default) |
-| Intel Optimization | OpenVINO speedup | ✅ 3.7x | [Benchmarks](docs/BENCHMARKS.md) |
+| Intel Optimization | OpenVINO speedup | ✅ 3.7x |
 | Multi-agent | Collaboration patterns | ✅ Yes | Dynamic task injection in document processor |
 
 ### 📦 Submission Deliverables Checklist
@@ -465,12 +437,12 @@ This project is built for the **Intel AI Innovation Challenge 2024 - Problem 2: 
 - [x] **API Documentation**: `docs/API_REFERENCE.md` - All public APIs documented
 - [x] **Architecture Design**: `docs/ARCHITECTURE.md` - Technical design with diagrams
 - [x] **User Guide**: `docs/USER_GUIDE.md` - Comprehensive tutorial with examples
-- [x] **Deployment Guide**: `docs/deployment.md` - Local, cloud, and production setup
+- [x] **Deployment Guide**:   Local, cloud, and production setup
 - [x] **Reference Agent 1**: `examples/agents/document_processor/` - Financial document processing
 - [x] **Reference Agent 2**: `examples/agents/customer_support/` - Customer support automation
-- [x] **Benchmarks**: `docs/BENCHMARKS.md` - Performance results with methodology
+- [x] **Benchmarks**: Performance results with methodology
 - [x] **Tests**: `tests/` - 80%+ code coverage
-- [x] **Contributing Guide**: `CONTRIBUTING.md` - Community contribution guidelines
+- [x] **Contributing Guide**: Community contribution guidelines
 - [x] **Roadmap**: `docs/ROADMAP.md` - Future development plans
 
 ### 🎯 Innovation Highlights
@@ -510,7 +482,6 @@ This transparent approach demonstrates:
 
 Built with:
 - **Intel® OpenVINO™** for ML acceleration
-- **Intel® DevCloud** for benchmarking
 - **FastAPI** for REST API
 - **Apache Kafka** for messaging
 - **Apache Airflow** for DAG export
@@ -528,5 +499,5 @@ Built with:
 <div align="center">
   <strong>⭐ If you find AIWork useful, please star this repository! ⭐</strong>
   <br><br>
-  <sub>Built with ❤️ for the Intel AI Innovation Challenge 2024</sub>
+  <sub>Built with ❤️ for the Intel AI Innovation Challenge 2025-26</sub>
 </div>
