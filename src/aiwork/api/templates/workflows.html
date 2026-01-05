@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block title %}Workflows - AIWork{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Header with helpful description -->
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h2 style="display: flex; align-items: center;">
+                <span class="icon-workflow mr-3" style="font-size: 2rem;"></span>
+                Workflows
+            </h2>
+            <p class="text-secondary mt-2">Create and manage your AI-powered workflows. Each workflow consists of tasks that run in sequence or parallel.</p>
+        </div>
+        <button onclick="showCreateWorkflowWizard()" class="btn btn-primary btn-lg tooltip">
+            <span class="icon-plus mr-2"></span>Create Workflow
+            <span class="tooltiptext">Start building a new AI workflow with our easy step-by-step wizard</span>
+        </button>
+    </div>
+
+    <!-- Workflows List -->
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
+            <div class="flex justify-between items-center">
+                <h3>All Workflows</h3>
+                <div class="flex space-x-2">
+                    <button onclick="filterWorkflows('all')" id="filter-all" class="btn btn-primary" style="padding: 0.5rem 1rem;">All</button>
+                    <button onclick="filterWorkflows('RUNNING')" id="filter-running" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Running</button>
+                    <button onclick="filterWorkflows('COMPLETED')" id="filter-completed" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Completed</button>
+                    <button onclick="filterWorkflows('FAILED')" id="filter-failed" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Failed</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="workflows-container">
+                <div class="empty-state" style="padding: 3rem 2rem;">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; opacity: 0.5;">📋</div>
+                    <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Get started by creating your first AI workflow. It's easy and guided!</p>
+                    <button onclick="showCreateWorkflowWizard()" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create First Workflow
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Workflow Wizard Modal -->
+<div id="create-workflow-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3 style="display: flex; align-items: center;">
+                <span class="icon-plus mr-2" style="font-size: 1.5rem;"></span>
+                Create New Workflow
+            </h3>
+            <button onclick="hideCreateWorkflowWizard()" class="modal-close">✕</button>
+        </div>
+        
+        <!-- Step Indicator -->
+        <div class="steps" style="margin-top: 1.5rem;">
+            <div class="step active" id="step-indicator-1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="step" id="step-indicator-2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Add Tasks</div>
+            </div>
+            <div class="step" id="step-indicator-3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <form id="create-workflow-form" onsubmit="createWorkflow(event)">
+            <!-- Step 1: Basic Info -->
+            <div id="wizard-step-1" class="wizard-step">
+                <div class="form-group">
+                    <label class="form-label">Workflow Name *</label>
+                    <input type="text" id="workflow-name" required class="form-input" placeholder="e.g., document_processing_pipeline">
+                    <div class="help-text">Choose a descriptive name for your workflow (use underscores instead of spaces)</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="workflow-description" rows="3" class="form-input" placeholder="What does this workflow do?"></textarea>
+                    <div class="help-text">Optional: Describe what this workflow accomplishes</div>
+                </div>
+                
+                <div style="text-align: right; margin-top: 2rem;">
+                    <button type="button" onclick="nextStep()" class="btn btn-primary">
+                        Next: Add Tasks →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Add Tasks -->
+            <div id="wizard-step-2" class="wizard-step hidden">
+                <div class="form-group">
+                    <label class="form-label">Tasks</label>
+                    <div id="tasks-container" class="space-y-4">
+                        <!-- Tasks will be added here -->
+                    </div>
+                    <button type="button" onclick="addTask()" class="btn btn-secondary" style="margin-top: 1rem;">
+                        <span class="icon-plus mr-2"></span>Add Task
+                    </button>
+                    <div class="help-text">Add tasks that will run in your workflow. You can specify which tasks depend on others.</div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                    <button type="button" onclick="previousStep()" class="btn btn-secondary">
+                        ← Back
+                    </button>
+                    <button type="button" onclick="nextStep()" class="btn btn-primary">
+                        Next: Review →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Review & Submit -->
+            <div id="wizard-step-3" class="wizard-step hidden">
+                <div class="card" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #3b82f6; padding: 1.5rem;">
+                    <h4 style="margin-bottom: 1rem; display: flex; align-items: center; color: #1e40af;">
+                        <span style="font-size: 1.5rem; margin-right: 0.5rem;">✓</span>
+                        Review Your Workflow
+                    </h4>
+                    <div id="workflow-review" style="color: #1f2937;">
+                        <!-- Review content will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label">Initial Context (JSON)</label>
+                    <textarea id="workflow-context" rows="4" class="form-input" placeholder='{"key": "value"}'>{}</textarea>
+                    <div class="help-text">Optional: Provide initial data for your workflow in JSON format</div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                    <button type="button" onclick="previousStep()" class="btn btn-secondary">
+                        ← Back
+                    </button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <span class="icon-check mr-2"></span>Create Workflow
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success/Error Message Container -->
+<div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 1000; max-width: 400px;"></div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentStep = 1;
+    let currentFilter = 'all';
+    let taskCounter = 0;
+    
+    function showCreateWorkflowWizard() {
+        document.getElementById('create-workflow-modal').classList.remove('hidden');
+        currentStep = 1;
+        updateStepIndicators();
+        addTask(); // Add first task by default
+    }
+    
+    function hideCreateWorkflowWizard() {
+        document.getElementById('create-workflow-modal').classList.add('hidden');
+        document.getElementById('create-workflow-form').reset();
+        document.getElementById('tasks-container').innerHTML = '';
+        taskCounter = 0;
+        currentStep = 1;
+        updateStepIndicators();
+    }
+    
+    function nextStep() {
+        // Validation for step 1
+        if (currentStep === 1) {
+            const name = document.getElementById('workflow-name').value;
+            if (!name) {
+                showMessage('Please enter a workflow name', 'error');
+                return;
+            }
+        }
+        
+        // Validation for step 2
+        if (currentStep === 2) {
+            const tasks = document.querySelectorAll('#tasks-container > div');
+            if (tasks.length === 0) {
+                showMessage('Please add at least one task', 'error');
+                return;
+            }
+            
+            // Check if all task names are filled
+            let hasEmptyTask = false;
+            tasks.forEach(task => {
+                const taskName = task.querySelector('.task-name').value;
+                if (!taskName) hasEmptyTask = true;
+            });
+            
+            if (hasEmptyTask) {
+                showMessage('Please fill in all task names', 'error');
+                return;
+            }
+            
+            // Update review
+            updateReview();
+        }
+        
+        if (currentStep < 3) {
+            document.getElementById(`wizard-step-${currentStep}`).classList.add('hidden');
+            currentStep++;
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            updateStepIndicators();
+        }
+    }
+    
+    function previousStep() {
+        if (currentStep > 1) {
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            document.getElementById(`wizard-step-${currentStep}`).classList.add('hidden');
+            currentStep--;
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            updateStepIndicators();
+        }
+    }
+    
+    function updateStepIndicators() {
+        for (let i = 1; i <= 3; i++) {
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            indicator.classList.remove('active', 'completed');
+            if (i < currentStep) {
+                indicator.classList.add('completed');
+            } else if (i === currentStep) {
+                indicator.classList.add('active');
+            }
+        }
+    }
+    
+    function addTask() {
+        const container = document.getElementById('tasks-container');
+        const taskId = taskCounter++;
+        const taskHtml = `
+            <div class="card" style="padding: 1rem; background: #f9fafb;" id="task-${taskId}">
+                <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+                    <strong style="color: #1f2937;">Task ${taskId + 1}</strong>
+                    <button type="button" onclick="removeTask(${taskId})" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">
+                        🗑️ Remove
+                    </button>
+                </div>
+                <input type="text" placeholder="Task name (e.g., extract_data)" class="form-input task-name" required style="margin-bottom: 0.5rem;">
+                <input type="text" placeholder="Dependencies (comma-separated, e.g., task1,task2)" class="form-input task-deps" style="font-size: 0.875rem;">
+                <div class="help-text">Dependencies: Leave empty if this task can run immediately</div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', taskHtml);
+    }
+    
+    function removeTask(taskId) {
+        const task = document.getElementById(`task-${taskId}`);
+        if (task) {
+            task.remove();
+        }
+    }
+    
+    function updateReview() {
+        const name = document.getElementById('workflow-name').value;
+        const description = document.getElementById('workflow-description').value;
+        const taskElements = document.querySelectorAll('#tasks-container > div');
+        
+        let reviewHTML = `
+            <div style="margin-bottom: 1rem;">
+                <strong>Name:</strong> ${name}
+            </div>
+        `;
+        
+        if (description) {
+            reviewHTML += `
+                <div style="margin-bottom: 1rem;">
+                    <strong>Description:</strong> ${description}
+                </div>
+            `;
+        }
+        
+        reviewHTML += `<div style="margin-bottom: 0.5rem;"><strong>Tasks (${taskElements.length}):</strong></div><ul style="list-style: none; padding-left: 0;">`;
+        
+        taskElements.forEach((el, index) => {
+            const taskName = el.querySelector('.task-name').value;
+            const deps = el.querySelector('.task-deps').value;
+            reviewHTML += `<li style="padding: 0.5rem; background: white; margin-bottom: 0.5rem; border-radius: 4px;">
+                <strong>${index + 1}.</strong> ${taskName}
+                ${deps ? `<span style="color: #6b7280; font-size: 0.875rem;"> → depends on: ${deps}</span>` : ''}
+            </li>`;
+        });
+        
+        reviewHTML += `</ul>`;
+        document.getElementById('workflow-review').innerHTML = reviewHTML;
+    }
+    
+    async function createWorkflow(event) {
+        event.preventDefault();
+        
+        // Show loading
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalHTML = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="spinner" style="margin: 0 auto;"></div>';
+        submitBtn.disabled = true;
+        
+        const name = document.getElementById('workflow-name').value;
+        const contextStr = document.getElementById('workflow-context').value;
+        
+        // Parse tasks
+        const taskElements = document.querySelectorAll('#tasks-container > div');
+        const tasks = Array.from(taskElements).map(el => {
+            const taskName = el.querySelector('.task-name').value;
+            const depsStr = el.querySelector('.task-deps').value;
+            const depends_on = depsStr ? depsStr.split(',').map(d => d.trim()).filter(d => d) : [];
+            return { name: taskName, depends_on };
+        });
+        
+        // Parse context
+        let context = {};
+        try {
+            context = JSON.parse(contextStr);
+        } catch (e) {
+            showMessage('Invalid JSON in context field', 'error');
+            submitBtn.innerHTML = originalHTML;
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        // Submit workflow
+        try {
+            const response = await fetch('/workflow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, tasks, context })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                hideCreateWorkflowWizard();
+                showMessage(`✅ Workflow created successfully! ID: ${result.id}`, 'success');
+                loadWorkflows();
+            } else {
+                showMessage(`❌ Error: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`❌ Failed to create workflow: ${error.message}`, 'error');
+        } finally {
+            submitBtn.innerHTML = originalHTML;
+            submitBtn.disabled = false;
+        }
+    }
+    
+    function showMessage(message, type) {
+        const container = document.getElementById('message-container');
+        const messageClass = type === 'success' ? 'success-message' : 'error-message';
+        const messageHTML = `
+            <div class="${messageClass}" style="animation: slideIn 0.3s ease;">
+                ${message}
+            </div>
+        `;
+        container.innerHTML = messageHTML;
+        
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 5000);
+    }
+    
+    async function loadWorkflows() {
+        const container = document.getElementById('workflows-container');
+        container.innerHTML = `
+            <div class="empty-state" style="padding: 3rem 2rem;">
+                <div style="font-size: 5rem; margin-bottom: 1rem; opacity: 0.5;">📋</div>
+                <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                <p style="color: #6b7280; margin-bottom: 1.5rem;">Workflows you create will appear here. Get started by creating your first workflow!</p>
+                <button onclick="showCreateWorkflowWizard()" class="btn btn-primary">
+                    <span class="icon-plus mr-2"></span>Create First Workflow
+                </button>
+            </div>
+        `;
+    }
+    
+    function filterWorkflows(filter) {
+        currentFilter = filter;
+        
+        // Update button styles
+        ['all', 'running', 'completed', 'failed'].forEach(f => {
+            const btn = document.getElementById(`filter-${f}`);
+            if (f === filter.toLowerCase()) {
+                btn.className = 'btn btn-primary';
+                btn.style.padding = '0.5rem 1rem';
+            } else {
+                btn.className = 'btn btn-secondary';
+                btn.style.padding = '0.5rem 1rem';
+            }
+        });
+        
+        loadWorkflows();
+    }
+    
+    // Initialize
+    loadWorkflows();
+</script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+</style>
+{% endblock %}

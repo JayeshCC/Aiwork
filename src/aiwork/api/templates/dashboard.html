@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AIWork{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Page Header - Minimal -->
+    <div class="mb-8">
+        <h2>Dashboard</h2>
+        <p class="text-secondary mt-2">Overview of your AI workflows and agents</p>
+    </div>
+
+    <!-- Stats Grid - Clean cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div class="stat-card tooltip">
+            <span class="stat-icon">📊</span>
+            <div class="stat-label">Total Workflows</div>
+            <div class="stat-value" id="total-workflows">0</div>
+            <span class="tooltiptext">All workflows created in your workspace</span>
+        </div>
+
+        <div class="stat-card tooltip">
+            <span class="stat-icon">▶️</span>
+            <div class="stat-label">Active</div>
+            <div class="stat-value" id="active-workflows">0</div>
+            <span class="tooltiptext">Currently running or pending workflows</span>
+        </div>
+
+        <div class="stat-card tooltip">
+            <span class="stat-icon">✅</span>
+            <div class="stat-label">Completed</div>
+            <div class="stat-value" id="completed-workflows">0</div>
+            <span class="tooltiptext">Successfully completed workflows</span>
+        </div>
+
+        <div class="stat-card tooltip">
+            <span class="stat-icon">🤖</span>
+            <div class="stat-label">Agents</div>
+            <div class="stat-value">3</div>
+            <span class="tooltiptext">Pre-configured AI agents available</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions - Minimal cards -->
+    <div class="card mb-8">
+        <div class="card-header">
+            <h3>Quick Actions</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/ui/workflows/new" class="card card-hover" style="padding: var(--space-4); text-decoration: none;">
+                    <div class="flex items-center gap-4">
+                        <div style="font-size: 24px;">➕</div>
+                        <div>
+                            <h4 class="mb-1">Create Workflow</h4>
+                            <p style="font-size: 12px;">Build a new AI workflow</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="/ui/agents" class="card card-hover" style="padding: var(--space-4); text-decoration: none;">
+                    <div class="flex items-center gap-4">
+                        <div style="font-size: 24px;">👥</div>
+                        <div>
+                            <h4 class="mb-1">Explore Agents</h4>
+                            <p style="font-size: 12px;">View available AI agents</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="/ui/api-explorer" class="card card-hover" style="padding: var(--space-4); text-decoration: none;">
+                    <div class="flex items-center gap-4">
+                        <div style="font-size: 24px;">💻</div>
+                        <div>
+                            <h4 class="mb-1">API Explorer</h4>
+                            <p style="font-size: 12px;">Test REST endpoints</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Workflows - Collapsible section -->
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h3>Recent Workflows</h3>
+                <a href="/ui/workflows" class="text-sm" style="color: var(--accent-primary);">View all →</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="recent-workflows">
+                <div class="empty-state">
+                    <span class="icon">📥</span>
+                    <h4>No workflows yet</h4>
+                    <p>Create your first workflow to get started. It's quick and easy.</p>
+                    <a href="/ui/workflows/new" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create Workflow
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let mockWorkflows = [];
+    
+    function updateStats() {
+        document.getElementById('total-workflows').textContent = mockWorkflows.length;
+        document.getElementById('active-workflows').textContent = mockWorkflows.filter(w => w.status === 'RUNNING' || w.status === 'PENDING').length;
+        document.getElementById('completed-workflows').textContent = mockWorkflows.filter(w => w.status === 'COMPLETED').length;
+    }
+    
+    function renderRecentWorkflows() {
+        const container = document.getElementById('recent-workflows');
+        if (mockWorkflows.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <span class="icon">📥</span>
+                    <h4>No workflows yet</h4>
+                    <p>Create your first workflow to get started. It's quick and easy.</p>
+                    <a href="/ui/workflows/new" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create Workflow
+                    </a>
+                </div>
+            `;
+            return;
+        }
+        
+        // Render workflows list
+        container.innerHTML = mockWorkflows.slice(0, 5).map(workflow => {
+            const statusBadges = {
+                'PENDING': { class: 'badge-warning', icon: '⏳' },
+                'RUNNING': { class: 'badge-info', icon: '▶️' },
+                'COMPLETED': { class: 'badge-success', icon: '✅' },
+                'FAILED': { class: 'badge-danger', icon: '❌' }
+            };
+            const status = statusBadges[workflow.status];
+            
+            return `
+                <div class="card card-hover" style="padding: var(--space-4); margin-bottom: var(--space-3);" onclick="viewWorkflow('${workflow.id}')">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <span style="font-size: 20px;">${status.icon}</span>
+                            <div>
+                                <h4 style="margin-bottom: 4px;">${workflow.name}</h4>
+                                <p class="text-xs text-secondary">ID: ${workflow.id.substring(0, 12)}...</p>
+                            </div>
+                        </div>
+                        <span class="badge ${status.class}">${workflow.status}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function viewWorkflow(id) {
+        window.location.href = `/ui/workflows/${id}`;
+    }
+    
+    // Initialize
+    updateStats();
+    renderRecentWorkflows();
+    
+    // Refresh every 5 seconds
+    setInterval(() => {
+        updateStats();
+        renderRecentWorkflows();
+    }, 5000);
+</script>
+{% endblock %}

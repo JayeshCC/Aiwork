@@ -65,4 +65,4 @@ airflow_dag_export.py
 
 #AI assistant files
 GEMINI.md
-AGENTS.md
+AGENTS.md*.bak

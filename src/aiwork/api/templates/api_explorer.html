@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}API Explorer - AIWork{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <!-- Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">API Explorer</h2>
+        <p class="mt-1 text-sm text-gray-600">Interactive REST API testing interface</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Endpoints List -->
+        <div class="lg:col-span-1">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-900">Available Endpoints</h3>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <button onclick="selectEndpoint('health')" class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors endpoint-btn" id="endpoint-health">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-900">Health Check</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">/health</p>
+                    </button>
+                    
+                    <button onclick="selectEndpoint('submit')" class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors endpoint-btn" id="endpoint-submit">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-900">Submit Workflow</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">POST</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">/workflow</p>
+                    </button>
+                    
+                    <button onclick="selectEndpoint('status')" class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors endpoint-btn" id="endpoint-status">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-900">Workflow Status</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">/workflow/{'{id}'}</p>
+                    </button>
+                    
+                    <button onclick="selectEndpoint('task')" class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors endpoint-btn" id="endpoint-task">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-medium text-gray-900">Task Result</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">GET</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">/task/{'{id}'}</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request/Response Panel -->
+        <div class="lg:col-span-2">
+            <div class="bg-white shadow rounded-lg overflow-hidden">
+                <!-- Request Section -->
+                <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Request</h3>
+                </div>
+                
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Endpoint URL</label>
+                        <div class="flex">
+                            <span id="method-badge" class="inline-flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-700 text-sm font-medium">GET</span>
+                            <input type="text" id="endpoint-url" value="/health" readonly class="flex-1 px-3 py-2 border border-gray-300 rounded-r-lg bg-gray-50 text-gray-700 text-sm font-mono">
+                        </div>
+                    </div>
+                    
+                    <div id="request-body-section" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Request Body (JSON)</label>
+                        <textarea id="request-body" rows="10" class="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                    </div>
+                    
+                    <div id="path-params-section" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Path Parameters</label>
+                        <input type="text" id="path-param" placeholder="Enter workflow/task ID" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <button onclick="sendRequest()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-2"></i>Send Request
+                    </button>
+                </div>
+
+                <!-- Response Section -->
+                <div class="border-t border-gray-200">
+                    <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Response</h3>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div id="response-status" class="mb-4 hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-700">Status:</span>
+                                <span id="status-code" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                            </div>
+                        </div>
+                        
+                        <div id="response-body" class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto min-h-[200px] flex items-center justify-center">
+                            <div class="text-center text-gray-500">
+                                <i class="fas fa-info-circle text-3xl mb-2"></i>
+                                <p>Select an endpoint and click "Send Request" to see the response</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentation -->
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 class="text-sm font-semibold text-blue-900 mb-2 flex items-center">
+                    <i class="fas fa-book text-blue-600 mr-2"></i>
+                    Endpoint Documentation
+                </h4>
+                <div id="endpoint-docs" class="text-sm text-blue-800">
+                    <p>Select an endpoint from the list to view its documentation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const endpoints = {
+        health: {
+            method: 'GET',
+            url: '/health',
+            hasBody: false,
+            hasParams: false,
+            docs: 'Check the health status of the AIWork API server. Returns the framework name, version, and health status.',
+            exampleResponse: { status: 'healthy', framework: 'AIWork', version: '0.1.0' }
+        },
+        submit: {
+            method: 'POST',
+            url: '/workflow',
+            hasBody: true,
+            hasParams: false,
+            docs: 'Submit a new workflow for execution. Provide workflow name, tasks with dependencies, and initial context.',
+            exampleBody: {
+                name: "example_workflow",
+                tasks: [
+                    { name: "task1", depends_on: [] },
+                    { name: "task2", depends_on: ["task1"] }
+                ],
+                context: { key: "value" }
+            }
+        },
+        status: {
+            method: 'GET',
+            url: '/workflow/{id}',
+            hasBody: false,
+            hasParams: true,
+            docs: 'Get the status of a workflow by its ID. Returns workflow name, status, tasks, and any errors.',
+            exampleResponse: {
+                id: "workflow-uuid",
+                name: "example_workflow",
+                status: "COMPLETED",
+                tasks: { task1: { status: "COMPLETED", output: {} } }
+            }
+        },
+        task: {
+            method: 'GET',
+            url: '/task/{id}',
+            hasBody: false,
+            hasParams: true,
+            docs: 'Get the result of a specific task by its ID. Returns task name, status, output, and any errors.',
+            exampleResponse: {
+                id: "task-uuid",
+                name: "task_name",
+                status: "COMPLETED",
+                output: {}
+            }
+        }
+    };
+    
+    let currentEndpoint = 'health';
+    
+    function selectEndpoint(endpointId) {
+        currentEndpoint = endpointId;
+        const endpoint = endpoints[endpointId];
+        
+        // Update UI
+        document.querySelectorAll('.endpoint-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-600');
+        });
+        document.getElementById(`endpoint-${endpointId}`).classList.add('bg-blue-50', 'border-l-4', 'border-blue-600');
+        
+        // Update method badge
+        const badge = document.getElementById('method-badge');
+        badge.textContent = endpoint.method;
+        badge.className = endpoint.method === 'POST' 
+            ? 'inline-flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 bg-blue-100 text-blue-800 text-sm font-medium'
+            : 'inline-flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-300 bg-green-100 text-green-800 text-sm font-medium';
+        
+        // Update URL
+        document.getElementById('endpoint-url').value = endpoint.url;
+        
+        // Show/hide request body
+        const bodySection = document.getElementById('request-body-section');
+        if (endpoint.hasBody) {
+            bodySection.classList.remove('hidden');
+            document.getElementById('request-body').value = JSON.stringify(endpoint.exampleBody, null, 2);
+        } else {
+            bodySection.classList.add('hidden');
+        }
+        
+        // Show/hide path params
+        const paramsSection = document.getElementById('path-params-section');
+        if (endpoint.hasParams) {
+            paramsSection.classList.remove('hidden');
+            document.getElementById('path-param').value = '';
+        } else {
+            paramsSection.classList.add('hidden');
+        }
+        
+        // Update documentation
+        document.getElementById('endpoint-docs').innerHTML = `<p>${endpoint.docs}</p>`;
+        
+        // Clear response
+        document.getElementById('response-status').classList.add('hidden');
+        document.getElementById('response-body').innerHTML = `
+            <div class="text-center text-gray-500">
+                <i class="fas fa-info-circle text-3xl mb-2"></i>
+                <p>Click "Send Request" to see the response</p>
+            </div>
+        `;
+    }
+    
+    async function sendRequest() {
+        const endpoint = endpoints[currentEndpoint];
+        let url = endpoint.url;
+        
+        // Replace path parameters
+        if (endpoint.hasParams) {
+            const paramValue = document.getElementById('path-param').value;
+            if (!paramValue) {
+                alert('Please enter a path parameter (workflow/task ID)');
+                return;
+            }
+            url = url.replace('{id}', paramValue);
+        }
+        
+        const options = {
+            method: endpoint.method,
+            headers: { 'Content-Type': 'application/json' }
+        };
+        
+        if (endpoint.hasBody) {
+            try {
+                const body = JSON.parse(document.getElementById('request-body').value);
+                options.body = JSON.stringify(body);
+            } catch (e) {
+                alert('Invalid JSON in request body');
+                return;
+            }
+        }
+        
+        try {
+            const response = await fetch(url, options);
+            const data = await response.json();
+            
+            // Show response status
+            const statusEl = document.getElementById('response-status');
+            statusEl.classList.remove('hidden');
+            
+            const statusCode = document.getElementById('status-code');
+            statusCode.textContent = `${response.status} ${response.statusText}`;
+            statusCode.className = response.ok 
+                ? 'px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'
+                : 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+            
+            // Show response body
+            document.getElementById('response-body').innerHTML = `<pre class="text-sm">${JSON.stringify(data, null, 2)}</pre>`;
+            
+        } catch (error) {
+            document.getElementById('response-status').classList.remove('hidden');
+            document.getElementById('status-code').textContent = 'Error';
+            document.getElementById('status-code').className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800';
+            document.getElementById('response-body').innerHTML = `<pre class="text-sm text-red-400">${error.message}</pre>`;
+        }
+    }
+    
+    // Initialize
+    selectEndpoint('health');
+</script>
+{% endblock %}
