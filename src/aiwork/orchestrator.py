@@ -1,12 +1,21 @@
 from typing import Dict, Any
 from .core.flow import Flow
+from .executors.local_executor import LocalExecutor
 
 class Orchestrator:
     """
     Executes Flows, managing state and dependencies.
     """
-    def __init__(self):
+    def __init__(self, executor=None):
+        """
+        Initialize the Orchestrator.
+        
+        Args:
+            executor: Executor instance to use for task execution.
+                     Defaults to LocalExecutor if not provided.
+        """
         self.memory = {}
+        self.executor = executor or LocalExecutor()
 
     def execute(self, flow: Flow, initial_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
@@ -41,8 +50,8 @@ class Orchestrator:
                  print(f"    > Assigned to Agent: {task.agent.role}")
 
             try:
-                # Pass the full context to the task
-                result = task.execute(context)
+                # Pass the full context to the task via executor
+                result = self.executor.execute(task, context)
                 context["outputs"][task.name] = result
                 processed_tasks.add(task.name)
                 print(f"  Task {task.name} Completed.")

@@ -1,5 +1,6 @@
 from typing import Callable, Any, Dict, Optional
 import uuid
+import warnings
 
 class Task:
     """
@@ -29,59 +30,51 @@ class Task:
         self.output = None
         self.error = None
 
+    def _run_handler(self, context: Dict[str, Any]) -> Any:
+        """
+        Internal method to run the task's handler or agent.
+        This should be called by the executor, not directly.
+        
+        Args:
+            context: Execution context with workflow state
+            
+        Returns:
+            Task execution result
+            
+        Raises:
+            ValueError: If task has no handler and no agent
+        """
+        if self.agent:
+            # Agent-centric execution
+            if self.handler:
+                result = self.handler(context)
+            else:
+                result = self.agent.execute_task(self.description, context)
+        elif self.handler:
+            # Legacy/Function-centric execution
+            result = self.handler(context)
+        else:
+            raise ValueError(f"Task {self.name} has no Agent and no Handler.")
+        
+        return result
+
     def execute(self, context: Dict[str, Any]) -> Any:
         """
         Executes the task with retry logic and guardrails.
+        
+        DEPRECATED: This method is deprecated. Use an Orchestrator with an Executor instead.
+        The orchestrator will handle task execution through the executor pattern.
+        
+        This method is kept for backward compatibility and will be removed in a future version.
         """
-        from aiwork.core.observability import metrics
-        import time
+        warnings.warn(
+            "Task.execute() is deprecated. Use Orchestrator with an Executor instead. "
+            "Example: orchestrator.execute(flow, context)",
+            DeprecationWarning,
+            stacklevel=2
+        )
         
-        self.status = "RUNNING"
-        attempt = 0
-        start_time = time.time()
-        
-        while attempt <= self.retries:
-            try:
-                attempt += 1
-                
-                # --- Input Guardrails (Future) ---
-                # if self.input_guardrails: ...
-
-                if self.agent:
-                    # Agent-centric execution
-                    if self.handler:
-                        result = self.handler(context)
-                    else:
-                        result = self.agent.execute_task(self.description, context)
-                elif self.handler:
-                    # Legacy/Function-centric execution
-                    result = self.handler(context)
-                else:
-                    raise ValueError(f"Task {self.name} has no Agent and no Handler.")
-
-                # --- Output Guardrails ---
-                if hasattr(self, 'guardrails') and self.guardrails:
-                    for guard in self.guardrails:
-                        if not guard.validate(result):
-                            raise ValueError(f"Guardrail '{guard.name}' failed validation.")
-
-                self.output = result
-                self.status = "COMPLETED"
-                
-                duration = time.time() - start_time
-                metrics.record("task_duration_seconds", duration, {"task": self.name, "status": "success"})
-                
-                return result
-
-            except Exception as e:
-                print(f"  [Task {self.name}] Attempt {attempt}/{self.retries + 1} Failed: {e}")
-                if attempt > self.retries:
-                    self.error = str(e)
-                    self.status = "FAILED"
-                    
-                    duration = time.time() - start_time
-                    metrics.record("task_duration_seconds", duration, {"task": self.name, "status": "failed"})
-                    
-                    raise e
-                # Optional: Add backoff sleep here
-
+        # Use LocalExecutor for backward compatibility
+        from aiwork.executors.local_executor import LocalExecutor
+        executor = LocalExecutor()
+        return executor.execute(self, context)
