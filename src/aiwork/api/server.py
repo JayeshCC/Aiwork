@@ -264,12 +264,117 @@ def get_task_status(workflow_id: str, task_name: str):
         }), 404
 
 
-def start_server():
+def is_port_available(port, host="0.0.0.0"):
+    """Check if port is available for binding."""
+    import socket
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind((host, port))
+            return True
+    except OSError:
+        return False
+
+
+def find_available_port(start_port=5000, max_attempts=10):
+    """Find an available port starting from start_port."""
+    for port in range(start_port, start_port + max_attempts):
+        if is_port_available(port):
+            return port
+    return None
+
+
+def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     """
-    Start the Flask server on port 5000.
+    Start the Flask API server.
+    
+    Args:
+        host: Host to bind to (default: 0.0.0.0 for external access)
+        port: Port to bind to (default: 5000)
+        debug: Enable Flask debug mode (default: False)
+        auto_port: Automatically find available port if specified port is taken
+    
+    Usage:
+        # From command line
+        python -m aiwork.api.server
+        
+        # Programmatically
+        from aiwork.api.server import start_server
+        start_server(port=8080)
     """
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    # Check port availability
+    if not is_port_available(port, host):
+        if auto_port:
+            print(f"⚠️  Port {port} is already in use")
+            new_port = find_available_port(port + 1)
+            if new_port:
+                print(f"✅ Using alternative port: {new_port}")
+                port = new_port
+            else:
+                print(f"❌ Could not find available port")
+                raise OSError(f"Port {port} is already in use and no alternatives found")
+        else:
+            raise OSError(f"Port {port} is already in use. Use --auto-port to find alternative.")
+    
+    print(f"🚀 Starting AIWork API Server on http://{host}:{port}")
+    print(f"📋 Available endpoints:")
+    print(f"   • GET  /health              - Health check")
+    print(f"   • POST /workflow            - Submit workflow")
+    print(f"   • GET  /workflow/<id>       - Get workflow status")
+    print(f"   • GET  /workflow/<id>/task/<name> - Get task status")
+    print(f"\n💡 Press Ctrl+C to stop")
+    
+    try:
+        app.run(host=host, port=port, debug=debug, threaded=True)
+    except OSError as e:
+        if "Address already in use" in str(e):
+            print(f"\n❌ Error: Port {port} is already in use")
+            print(f"💡 Try a different port: python -m aiwork.api.server --port 8080")
+            print(f"💡 Or kill the process using port {port}")
+        else:
+            print(f"\n❌ Error starting server: {e}")
+        raise
 
 
 if __name__ == "__main__":
-    start_server()
+    import sys
+    
+    # Simple CLI argument parsing
+    host = "0.0.0.0"
+    port = 5000
+    debug = False
+    auto_port = False
+    
+    args = sys.argv[1:]
+    i = 0
+    
+    while i < len(args):
+        if args[i] == "--port" and i + 1 < len(args):
+            try:
+                port = int(args[i + 1])
+                i += 2
+            except (IndexError, ValueError):
+                print("❌ Invalid port. Usage: python -m aiwork.api.server --port 8080")
+                sys.exit(1)
+        elif args[i] == "--debug":
+            debug = True
+            i += 1
+        elif args[i] == "--auto-port":
+            auto_port = True
+            i += 1
+        elif args[i] in ["-h", "--help"]:
+            print("AIWork API Server")
+            print("\nUsage:")
+            print("  python -m aiwork.api.server [options]")
+            print("\nOptions:")
+            print("  --port PORT     Port to bind to (default: 5000)")
+            print("  --debug         Enable debug mode")
+            print("  --auto-port     Automatically find available port if specified port is taken")
+            print("  -h, --help      Show this help message")
+            sys.exit(0)
+        else:
+            print(f"❌ Unknown argument: {args[i]}")
+            print("Run with --help for usage information")
+            sys.exit(1)
+    
+    start_server(host=host, port=port, debug=debug, auto_port=auto_port)
