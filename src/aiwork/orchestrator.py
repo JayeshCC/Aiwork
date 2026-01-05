@@ -1,34 +1,51 @@
 from typing import Dict, Any
 from .core.flow import Flow
 from .executors.local_executor import LocalExecutor
+from .memory.state_manager import StateManager
+import uuid
 
 class Orchestrator:
     """
     Executes Flows, managing state and dependencies.
     """
-    def __init__(self, executor=None):
+    def __init__(self, executor=None, state_manager=None):
         """
         Initialize the Orchestrator.
         
         Args:
             executor: Executor instance to use for task execution.
                      Defaults to LocalExecutor if not provided.
+            state_manager: StateManager instance for workflow state tracking.
+                          Defaults to new StateManager if not provided.
         """
         self.memory = {}
         self.executor = executor or LocalExecutor()
+        self.state_manager = state_manager or StateManager()
 
     def execute(self, flow: Flow, initial_context: Dict[str, Any] = None) -> Dict[str, Any]:
         """
-        Executes the given flow.
+        Executes the given flow with state tracking.
+        
+        Returns:
+            Dict with workflow_id and final outputs
         """
+        # Generate workflow ID for tracking
+        workflow_id = str(uuid.uuid4())
+        
+        # Initialize context
         context = initial_context or {}
+        context["workflow_id"] = workflow_id
         context["outputs"] = {}
+        
+        # Track workflow start
+        self.state_manager.set_workflow_status(workflow_id, "RUNNING", flow.name)
         
         # Get execution order
         try:
             execution_order = flow.get_topological_sort()
         except ValueError as e:
             print(f"Flow Error: {e}")
+            self.state_manager.set_workflow_status(workflow_id, "FAILED", flow.name, error=str(e))
             return context
 
         print(f"Starting Flow: {flow.name}")
@@ -45,6 +62,9 @@ class Orchestrator:
             if task.name in processed_tasks:
                 continue
 
+            # Track task start
+            self.state_manager.set_task_status(workflow_id, task.name, "RUNNING")
+
             print(f"  Executing Task: {task.name}...")
             if hasattr(task, 'agent') and task.agent:
                  print(f"    > Assigned to Agent: {task.agent.role}")
@@ -54,6 +74,11 @@ class Orchestrator:
                 result = self.executor.execute(task, context)
                 context["outputs"][task.name] = result
                 processed_tasks.add(task.name)
+                
+                # Track task completion
+                self.state_manager.set_task_status(workflow_id, task.name, "COMPLETED")
+                self.state_manager.update_task_output(workflow_id, task.name, result)
+                
                 print(f"  Task {task.name} Completed.")
 
                 # --- Hybrid Orchestration Logic ---
@@ -71,8 +96,15 @@ class Orchestrator:
 
             except Exception as e:
                 print(f"  Task {task.name} Failed: {e}")
+                # Track task failure
+                self.state_manager.set_task_status(workflow_id, task.name, "FAILED", error=str(e))
+                self.state_manager.set_workflow_status(workflow_id, "FAILED", flow.name, error=str(e))
                 # In a real system, handle retries or stop flow
                 break
         
         print(f"Flow {flow.name} Finished.")
+        # Only mark as COMPLETED if not already FAILED
+        current_state = self.state_manager.get_workflow_state(workflow_id)
+        if current_state["status"] != "FAILED":
+            self.state_manager.set_workflow_status(workflow_id, "COMPLETED", flow.name)
         return context
