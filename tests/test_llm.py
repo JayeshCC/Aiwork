@@ -109,3 +109,13 @@ def test_agent_with_llm_and_memory():
     # Verify memory was updated
     memories = memory.search("Analyze")
     assert len(memories) > 0
+
+
+def test_mock_llm_chat_empty_messages():
+    """Test MockLLM raises error for empty messages list."""
+    llm = MockLLM()
+    try:
+        llm.chat([])
+        assert False, "Should have raised ValueError"
+    except ValueError as e:
+        assert "messages list cannot be empty" in str(e)

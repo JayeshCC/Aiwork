@@ -68,7 +68,10 @@ class Agent:
                 return response
             except Exception as e:
                 if self.verbose:
-                    print(f"    [Agent: {self.role}] LLM call failed: {e}")
+                    print(
+                        f"    [Agent: {self.role}] LLM call failed "
+                        f"({type(e).__name__}): {e}"
+                    )
                 # Fallback to deterministic response
                 return f"[Agent {self.role}] Task: {task_description} (LLM unavailable)"
         else:

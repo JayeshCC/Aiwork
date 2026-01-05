@@ -1,4 +1,4 @@
-from typing import Dict, Any, Optional, List
+from typing import Dict, Optional, List
 from abc import ABC, abstractmethod
 
 
@@ -81,7 +81,9 @@ class MockLLM(BaseLLM):
     
     def chat(self, messages: List[Dict[str, str]], **kwargs) -> str:
         """Generate mock response from chat messages."""
-        last_message = messages[-1]["content"] if messages else ""
+        if not messages:
+            raise ValueError("messages list cannot be empty")
+        last_message = messages[-1]["content"]
         return self.generate(last_message, **kwargs)
 
 
@@ -112,18 +114,34 @@ class OpenAILLM(BaseLLM):
     
     def generate(self, prompt: str, **kwargs) -> str:
         """Generate response using OpenAI API."""
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            **kwargs
-        )
-        return response.choices[0].message.content
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                **kwargs
+            )
+            content = response.choices[0].message.content
+            if content is None:
+                raise RuntimeError("OpenAI API returned None content")
+            return content
+        except Exception as e:
+            raise RuntimeError(
+                "OpenAILLM.generate failed to generate response from OpenAI API"
+            ) from e
     
     def chat(self, messages: List[Dict[str, str]], **kwargs) -> str:
         """Generate response from chat messages."""
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            **kwargs
-        )
-        return response.choices[0].message.content
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                **kwargs
+            )
+            content = response.choices[0].message.content
+            if content is None:
+                raise RuntimeError("OpenAI API returned None content")
+            return content
+        except Exception as e:
+            raise RuntimeError(
+                "OpenAILLM.chat failed to generate response from OpenAI API"
+            ) from e
