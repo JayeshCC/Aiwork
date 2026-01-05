@@ -404,7 +404,7 @@ pytest
 **Problem:** File path typos
 ```bash
 # Wrong - space before extension
-python examples/document_processor/run. py
+python examples/agents/document_processor/run. py
 
 # Wrong - wrong directory separator
 python examples\agents\document_processor\run.py  # On Linux/Mac
