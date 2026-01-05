@@ -22,15 +22,21 @@ class Orchestrator:
         self.executor = executor or LocalExecutor()
         self.state_manager = state_manager or StateManager()
 
-    def execute(self, flow: Flow, initial_context: Dict[str, Any] = None) -> Dict[str, Any]:
+    def execute(self, flow: Flow, initial_context: Dict[str, Any] = None, workflow_id: str = None) -> Dict[str, Any]:
         """
         Executes the given flow with state tracking.
+        
+        Args:
+            flow: Flow to execute
+            initial_context: Optional initial context dict
+            workflow_id: Optional workflow ID (generated if not provided)
         
         Returns:
             Dict with workflow_id and final outputs
         """
-        # Generate workflow ID for tracking
-        workflow_id = str(uuid.uuid4())
+        # Generate or use provided workflow ID for tracking
+        if workflow_id is None:
+            workflow_id = str(uuid.uuid4())
         
         # Initialize context
         context = initial_context or {}

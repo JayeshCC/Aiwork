@@ -39,10 +39,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src')
 from aiwork.core.task import Task
 from aiwork.core.flow import Flow
 from aiwork.orchestrator import Orchestrator
+from aiwork.memory.state_manager import StateManager
 
 app = Flask(__name__)
 
-# In-memory storage for workflows and tasks
+# Shared StateManager and Orchestrator for all workflows
+state_manager = StateManager()
+orchestrator = Orchestrator(state_manager=state_manager)
+
+# In-memory storage for workflows and tasks (kept for backward compatibility)
 workflow_store: Dict[str, Dict[str, Any]] = {}
 task_store: Dict[str, Dict[str, Any]] = {}
 
@@ -52,46 +57,17 @@ store_lock = threading.Lock()
 
 def execute_workflow_async(workflow_id: str, flow: Flow, initial_context: Dict[str, Any]):
     """
-    Execute a workflow asynchronously and update the workflow store with results.
+    Execute a workflow asynchronously using shared orchestrator with StateManager.
     """
     try:
-        # Update status to RUNNING
-        with store_lock:
-            if workflow_id not in workflow_store:
-                return
-            workflow_store[workflow_id]["status"] = "RUNNING"
-        
         # Execute workflow (this is the long-running operation)
-        orchestrator = Orchestrator()
-        result = orchestrator.execute(flow, initial_context)
-        
-        # Update workflow status to COMPLETED
-        with store_lock:
-            if workflow_id not in workflow_store:
-                return
-            workflow_store[workflow_id]["status"] = "COMPLETED"
-            workflow_store[workflow_id]["result"] = result
-            
-            # Store individual task results
-            if "outputs" in result:
-                for task_name, task_output in result["outputs"].items():
-                    # Find the task object to get its ID and other metadata
-                    if task_name in flow.tasks:
-                        task_obj = flow.tasks[task_name]
-                        task_store[task_obj.id] = {
-                            "id": task_obj.id,
-                            "name": task_obj.name,
-                            "status": task_obj.status,
-                            "output": task_obj.output,
-                            "error": task_obj.error
-                        }
+        # Pass the workflow_id so orchestrator uses it for tracking
+        orchestrator.execute(flow, initial_context, workflow_id=workflow_id)
     
     except Exception as e:
-        # Update workflow status to FAILED
-        with store_lock:
-            if workflow_id in workflow_store:
-                workflow_store[workflow_id]["status"] = "FAILED"
-                workflow_store[workflow_id]["error"] = str(e)
+        # Error tracking is already handled by orchestrator's StateManager
+        # Just log for debugging
+        print(f"Workflow execution error: {e}")
 
 
 @app.route("/health", methods=["GET"])
@@ -165,15 +141,8 @@ def submit_workflow():
             task = Task(task_name, generic_handler)
             flow.add_task(task, depends_on=depends_on)
         
-        # Store workflow
-        workflow_store[workflow_id] = {
-            "id": workflow_id,
-            "name": workflow_name,
-            "flow": flow,
-            "status": "PENDING",
-            "result": None,
-            "error": None
-        }
+        # Initialize workflow state in StateManager
+        state_manager.set_workflow_status(workflow_id, "PENDING", workflow_name)
         
         # Execute workflow asynchronously
         thread = threading.Thread(
@@ -198,44 +167,50 @@ def submit_workflow():
 @app.route("/workflow/<workflow_id>", methods=["GET"])
 def get_workflow_status(workflow_id: str):
     """
-    Check workflow execution status.
+    Check workflow execution status from StateManager.
     
     Returns:
     {
         "id": "workflow-uuid",
         "name": "workflow_name",
         "status": "PENDING|RUNNING|COMPLETED|FAILED",
-        "outputs": {},  # Present if COMPLETED
+        "tasks": {
+            "task_name": {
+                "status": "COMPLETED",
+                "output": {...}
+            }
+        },
         "error": ""     # Present if FAILED
     }
     """
-    with store_lock:
-        if workflow_id not in workflow_store:
-            return jsonify({
-                "error": f"Workflow {workflow_id} not found"
-            }), 404
-        
-        workflow = workflow_store[workflow_id]
+    try:
+        state = state_manager.get_workflow_state(workflow_id)
         
         response = {
-            "id": workflow["id"],
-            "name": workflow["name"],
-            "status": workflow["status"]
+            "id": workflow_id,
+            "name": state["name"],
+            "status": state["status"],
+            "tasks": state["tasks"]
         }
         
-        if workflow["status"] == "COMPLETED" and workflow["result"]:
-            response["outputs"] = workflow["result"].get("outputs", {})
+        if state.get("error"):
+            response["error"] = state["error"]
         
-        if workflow["status"] == "FAILED" and workflow["error"]:
-            response["error"] = workflow["error"]
+        return jsonify(response), 200
     
-    return jsonify(response), 200
+    except ValueError as e:
+        return jsonify({
+            "error": f"Workflow {workflow_id} not found"
+        }), 404
 
 
 @app.route("/task/<task_id>", methods=["GET"])
 def get_task_result(task_id: str):
     """
-    Get individual task result.
+    Get individual task result (legacy endpoint using task_store).
+    
+    Note: This endpoint is for backward compatibility.
+    Use /workflow/<workflow_id>/task/<task_name> for new integrations.
     
     Returns:
     {
@@ -255,6 +230,38 @@ def get_task_result(task_id: str):
         task = task_store[task_id]
     
     return jsonify(task), 200
+
+
+@app.route("/workflow/<workflow_id>/task/<task_name>", methods=["GET"])
+def get_task_status(workflow_id: str, task_name: str):
+    """
+    Get status of specific task within a workflow from StateManager.
+    
+    Returns:
+    {
+        "workflow_id": "...",
+        "task_name": "...",
+        "status": "PENDING|RUNNING|COMPLETED|FAILED",
+        "output": {...},
+        "error": "..."
+    }
+    """
+    try:
+        status = state_manager.get_task_status(workflow_id, task_name)
+        state = state_manager.get_workflow_state(workflow_id)
+        task_data = state["tasks"].get(task_name, {})
+        
+        return jsonify({
+            "workflow_id": workflow_id,
+            "task_name": task_name,
+            "status": status,
+            "output": task_data.get("output"),
+            "error": task_data.get("error")
+        }), 200
+    except ValueError as e:
+        return jsonify({
+            "error": str(e)
+        }), 404
 
 
 def start_server():
