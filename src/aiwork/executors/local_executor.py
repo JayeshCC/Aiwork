@@ -44,23 +44,26 @@ class LocalExecutor(BaseExecutor):
         attempt = 0
         start_time = time.time()
         
+        # Check if task has verbose mode enabled
+        verbose = hasattr(task, 'verbose') and task.verbose
+        
         while attempt <= task.retries:
             try:
                 attempt += 1
                 
                 # --- Input Guardrails ---
                 if hasattr(task, 'input_guardrails') and task.input_guardrails:
-                    if hasattr(task, 'verbose') and task.verbose:
+                    if verbose:
                         print(f"    [Task {task.name}] Validating input with {len(task.input_guardrails)} guardrails...")
                     
                     for guard in task.input_guardrails:
                         if not guard.validate(context):
                             error_msg = f"Input guardrail '{guard.name}' failed validation"
-                            if hasattr(task, 'verbose') and task.verbose:
+                            if verbose:
                                 print(f"    [Task {task.name}] ❌ {error_msg}")
                             raise ValueError(error_msg)
                     
-                    if hasattr(task, 'verbose') and task.verbose:
+                    if verbose:
                         print(f"    [Task {task.name}] ✅ Input validation passed")
 
                 # Execute the task's core logic
@@ -68,17 +71,17 @@ class LocalExecutor(BaseExecutor):
 
                 # --- Output Guardrails ---
                 if hasattr(task, 'guardrails') and task.guardrails:
-                    if hasattr(task, 'verbose') and task.verbose:
+                    if verbose:
                         print(f"    [Task {task.name}] Validating output with {len(task.guardrails)} guardrails...")
                     
                     for guard in task.guardrails:
                         if not guard.validate(result):
                             error_msg = f"Output guardrail '{guard.name}' failed validation"
-                            if hasattr(task, 'verbose') and task.verbose:
+                            if verbose:
                                 print(f"    [Task {task.name}] ❌ {error_msg}")
                             raise ValueError(error_msg)
                     
-                    if hasattr(task, 'verbose') and task.verbose:
+                    if verbose:
                         print(f"    [Task {task.name}] ✅ Output validation passed")
 
                 task.output = result
