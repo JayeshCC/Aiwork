@@ -4,102 +4,141 @@
 
 {% block content %}
 <div>
-    <!-- Header -->
-    <div class="mb-8">
-        <h2>Dashboard</h2>
-        <p class="text-secondary mt-1 text-sm">Overview of your AI workflows and agents</p>
+    <!-- Welcome Banner -->
+    <div class="card mb-6" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem;">
+        <h2 style="color: white; margin-bottom: 0.5rem;">👋 Welcome to AIWork</h2>
+        <p style="color: rgba(255, 255, 255, 0.9); font-size: 1rem;">Build intelligent AI workflows with ease. Get started by creating your first workflow or exploring our agents.</p>
+        <div style="margin-top: 1.5rem;">
+            <a href="/ui/workflows/new" class="btn btn-success btn-lg" style="margin-right: 1rem;">
+                <span class="icon-plus mr-2"></span>Create Your First Workflow
+            </a>
+            <a href="https://github.com/JayeshCC/Aiwork/blob/main/docs/USER_GUIDE.md" target="_blank" class="btn btn-secondary btn-lg">
+                <span class="icon-book mr-2"></span>View Documentation
+            </a>
+        </div>
     </div>
 
-    <!-- Stats Cards -->
+    <!-- Stats Cards with better visuals -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <div class="stat-card">
+        <div class="stat-card tooltip card-hover">
             <div class="flex items-center">
-                <span class="icon-workflow stat-icon icon-blue"></span>
+                <div style="width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                    <span class="icon-workflow" style="font-size: 2rem; filter: brightness(0) invert(1);"></span>
+                </div>
                 <div>
                     <div class="stat-label">Total Workflows</div>
                     <div class="stat-value" id="total-workflows">0</div>
                 </div>
             </div>
+            <span class="tooltiptext">All workflows you've created, including active and completed ones</span>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card tooltip card-hover">
             <div class="flex items-center">
-                <span class="icon-play stat-icon icon-green"></span>
+                <div style="width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                    <span class="icon-play" style="font-size: 2rem; filter: brightness(0) invert(1);"></span>
+                </div>
                 <div>
                     <div class="stat-label">Active Workflows</div>
                     <div class="stat-value" id="active-workflows">0</div>
                 </div>
             </div>
+            <span class="tooltiptext">Workflows currently running or pending execution</span>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card tooltip card-hover">
             <div class="flex items-center">
-                <span class="icon-check stat-icon icon-green"></span>
+                <div style="width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                    <span class="icon-check" style="font-size: 2rem; filter: brightness(0) invert(1);"></span>
+                </div>
                 <div>
                     <div class="stat-label">Completed</div>
                     <div class="stat-value" id="completed-workflows">0</div>
                 </div>
             </div>
+            <span class="tooltiptext">Successfully completed workflows</span>
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card tooltip card-hover">
             <div class="flex items-center">
-                <span class="icon-robot stat-icon icon-purple"></span>
+                <div style="width: 56px; height: 56px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
+                    <span class="icon-robot" style="font-size: 2rem; filter: brightness(0) invert(1);"></span>
+                </div>
                 <div>
                     <div class="stat-label">Available Agents</div>
                     <div class="stat-value">3</div>
                 </div>
             </div>
+            <span class="tooltiptext">Pre-configured AI agents ready to use in your workflows</span>
         </div>
     </div>
 
-    <!-- Quick Actions -->
+    <!-- Quick Actions with better design -->
     <div class="card mb-8">
         <div class="card-body">
-            <h3 class="mb-4">Quick Actions</h3>
+            <h3 class="mb-4" style="display: flex; align-items: center;">
+                <span class="icon-settings mr-2" style="font-size: 1.5rem;"></span>
+                Quick Actions
+            </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                <a href="/ui/workflows/new" class="quick-action">
-                    <span class="icon icon-plus icon-blue"></span>
+                <a href="/ui/workflows/new" class="quick-action tooltip" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #3b82f6;">
+                    <span class="icon icon-plus" style="font-size: 2rem; color: #3b82f6;"></span>
                     <div>
-                        <h4>Create Workflow</h4>
-                        <p>Build a new AI workflow</p>
+                        <h4 style="color: #1e40af;">Create Workflow</h4>
+                        <p style="color: #3b82f6;">Build a new AI workflow with tasks and agents</p>
                     </div>
+                    <span class="tooltiptext">Start building your workflow by defining tasks and dependencies</span>
                 </a>
-                <a href="/ui/agents" class="quick-action">
-                    <span class="icon icon-settings icon-purple"></span>
+                <a href="/ui/agents" class="quick-action tooltip" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border: 2px solid #a855f7;">
+                    <span class="icon icon-settings" style="font-size: 2rem; color: #a855f7;"></span>
                     <div>
-                        <h4>Configure Agent</h4>
-                        <p>Set up AI agents</p>
+                        <h4 style="color: #7e22ce;">Explore Agents</h4>
+                        <p style="color: #a855f7;">Discover AI agents and their capabilities</p>
                     </div>
+                    <span class="tooltiptext">View available agents: Document Processor, Financial Analyst, Compliance Officer</span>
                 </a>
-                <a href="/ui/api-explorer" class="quick-action">
-                    <span class="icon icon-terminal icon-green"></span>
+                <a href="/ui/api-explorer" class="quick-action tooltip" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 2px solid #22c55e;">
+                    <span class="icon icon-terminal" style="font-size: 2rem; color: #22c55e;"></span>
                     <div>
-                        <h4>Test API</h4>
-                        <p>Explore API endpoints</p>
+                        <h4 style="color: #15803d;">Test API</h4>
+                        <p style="color: #22c55e;">Explore and test REST API endpoints</p>
                     </div>
+                    <span class="tooltiptext">Interactive API testing interface with live examples</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Recent Workflows -->
+    <!-- Recent Workflows with better empty state -->
     <div class="card">
-        <div class="card-header">
+        <div class="card-header" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
             <div class="flex justify-between items-center">
-                <h3>Recent Workflows</h3>
-                <a href="/ui/workflows" class="text-primary text-sm">View all →</a>
+                <h3 style="display: flex; align-items: center;">
+                    <span class="icon-workflow mr-2"></span>
+                    Recent Workflows
+                </h3>
+                <a href="/ui/workflows" class="text-primary text-sm font-semibold" style="color: #667eea;">View all →</a>
             </div>
         </div>
         <div class="card-body">
             <div id="recent-workflows">
-                <div class="empty-state">
-                    <div class="icon icon-inbox"></div>
-                    <p>No workflows yet. Create your first workflow to get started!</p>
+                <div class="empty-state" style="padding: 3rem 2rem;">
+                    <div class="icon icon-inbox" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"></div>
+                    <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Get started by creating your first AI workflow. It's quick and easy!</p>
+                    <a href="/ui/workflows/new" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create First Workflow
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Floating Help Button -->
+<div class="fab tooltip" onclick="alert('Help: Click on Quick Actions to get started!\n\n1. Create Workflow - Build your AI workflow\n2. Explore Agents - View available AI agents\n3. Test API - Try REST endpoints\n\nDocumentation: https://github.com/JayeshCC/Aiwork/blob/main/docs/UI_GUIDE.md')">
+    <span style="font-size: 1.5rem;">❓</span>
+    <span class="tooltiptext">Need help? Click for quick guide</span>
 </div>
 {% endblock %}
 
@@ -117,15 +156,49 @@
         const container = document.getElementById('recent-workflows');
         if (mockWorkflows.length === 0) {
             container.innerHTML = `
-                <div class="empty-state">
-                    <div class="icon icon-inbox"></div>
-                    <p>No workflows yet. Create your first workflow to get started!</p>
+                <div class="empty-state" style="padding: 3rem 2rem;">
+                    <div class="icon icon-inbox" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"></div>
+                    <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Get started by creating your first AI workflow. It's quick and easy!</p>
+                    <a href="/ui/workflows/new" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create First Workflow
+                    </a>
                 </div>
             `;
             return;
         }
         
         // Render workflows list here when we have data
+        container.innerHTML = mockWorkflows.slice(0, 5).map(workflow => {
+            const statusColors = {
+                'PENDING': { bg: '#fef3c7', text: '#92400e', icon: '⏳' },
+                'RUNNING': { bg: '#dbeafe', text: '#1e40af', icon: '▶️' },
+                'COMPLETED': { bg: '#d1fae5', text: '#065f46', icon: '✅' },
+                'FAILED': { bg: '#fee2e2', text: '#991b1b', icon: '❌' }
+            };
+            const status = statusColors[workflow.status];
+            
+            return `
+                <div class="card-hover" style="padding: 1rem; margin-bottom: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;" onclick="viewWorkflow('${workflow.id}')">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span style="font-size: 2rem; margin-right: 1rem;">${status.icon}</span>
+                            <div>
+                                <h4 style="font-weight: 600; color: #1f2937; margin-bottom: 0.25rem;">${workflow.name}</h4>
+                                <p style="font-size: 0.875rem; color: #6b7280;">ID: ${workflow.id.substring(0, 12)}...</p>
+                            </div>
+                        </div>
+                        <span style="padding: 0.5rem 1rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: ${status.bg}; color: ${status.text};">
+                            ${workflow.status}
+                        </span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    function viewWorkflow(id) {
+        window.location.href = `/ui/workflows/${id}`;
     }
     
     // Initialize

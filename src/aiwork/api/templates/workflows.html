@@ -3,122 +3,312 @@
 {% block title %}Workflows - AIWork{% endblock %}
 
 {% block content %}
-<div class="px-4 sm:px-0">
-    <!-- Header -->
+<div>
+    <!-- Header with helpful description -->
     <div class="mb-8 flex justify-between items-center">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900">Workflows</h2>
-            <p class="mt-1 text-sm text-gray-600">Manage and monitor your AI workflows</p>
+            <h2 style="display: flex; align-items: center;">
+                <span class="icon-workflow mr-3" style="font-size: 2rem;"></span>
+                Workflows
+            </h2>
+            <p class="text-secondary mt-2">Create and manage your AI-powered workflows. Each workflow consists of tasks that run in sequence or parallel.</p>
         </div>
-        <button onclick="showCreateWorkflowModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center transition-colors">
-            <i class="fas fa-plus mr-2"></i>Create Workflow
+        <button onclick="showCreateWorkflowWizard()" class="btn btn-primary btn-lg tooltip">
+            <span class="icon-plus mr-2"></span>Create Workflow
+            <span class="tooltiptext">Start building a new AI workflow with our easy step-by-step wizard</span>
         </button>
     </div>
 
     <!-- Workflows List -->
-    <div class="bg-white shadow rounded-lg">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">All Workflows</h3>
+    <div class="card">
+        <div class="card-header" style="background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
+            <div class="flex justify-between items-center">
+                <h3>All Workflows</h3>
                 <div class="flex space-x-2">
-                    <button onclick="filterWorkflows('all')" id="filter-all" class="px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800">All</button>
-                    <button onclick="filterWorkflows('RUNNING')" id="filter-running" class="px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Running</button>
-                    <button onclick="filterWorkflows('COMPLETED')" id="filter-completed" class="px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Completed</button>
-                    <button onclick="filterWorkflows('FAILED')" id="filter-failed" class="px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100">Failed</button>
+                    <button onclick="filterWorkflows('all')" id="filter-all" class="btn btn-primary" style="padding: 0.5rem 1rem;">All</button>
+                    <button onclick="filterWorkflows('RUNNING')" id="filter-running" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Running</button>
+                    <button onclick="filterWorkflows('COMPLETED')" id="filter-completed" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Completed</button>
+                    <button onclick="filterWorkflows('FAILED')" id="filter-failed" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Failed</button>
                 </div>
             </div>
         </div>
-        <div id="workflows-container" class="divide-y divide-gray-200">
-            <!-- Workflows will be loaded here -->
-            <div class="p-8 text-center text-gray-500">
-                <i class="fas fa-inbox text-5xl mb-3"></i>
-                <p class="text-lg">No workflows found</p>
-                <p class="text-sm mt-2">Click "Create Workflow" to get started</p>
+        <div class="card-body">
+            <div id="workflows-container">
+                <div class="empty-state" style="padding: 3rem 2rem;">
+                    <div style="font-size: 5rem; margin-bottom: 1rem; opacity: 0.5;">📋</div>
+                    <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                    <p style="color: #6b7280; margin-bottom: 1.5rem;">Get started by creating your first AI workflow. It's easy and guided!</p>
+                    <button onclick="showCreateWorkflowWizard()" class="btn btn-primary">
+                        <span class="icon-plus mr-2"></span>Create First Workflow
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Create Workflow Modal -->
-<div id="create-workflow-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-lg bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-bold text-gray-900">Create New Workflow</h3>
-            <button onclick="hideCreateWorkflowModal()" class="text-gray-400 hover:text-gray-600">
-                <i class="fas fa-times text-xl"></i>
-            </button>
+<!-- Create Workflow Wizard Modal -->
+<div id="create-workflow-modal" class="modal-overlay hidden">
+    <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-header">
+            <h3 style="display: flex; align-items: center;">
+                <span class="icon-plus mr-2" style="font-size: 1.5rem;"></span>
+                Create New Workflow
+            </h3>
+            <button onclick="hideCreateWorkflowWizard()" class="modal-close">✕</button>
         </div>
         
+        <!-- Step Indicator -->
+        <div class="steps" style="margin-top: 1.5rem;">
+            <div class="step active" id="step-indicator-1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Basic Info</div>
+            </div>
+            <div class="step" id="step-indicator-2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Add Tasks</div>
+            </div>
+            <div class="step" id="step-indicator-3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
         <form id="create-workflow-form" onsubmit="createWorkflow(event)">
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Workflow Name</label>
-                    <input type="text" id="workflow-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="e.g., document_processing_pipeline">
+            <!-- Step 1: Basic Info -->
+            <div id="wizard-step-1" class="wizard-step">
+                <div class="form-group">
+                    <label class="form-label">Workflow Name *</label>
+                    <input type="text" id="workflow-name" required class="form-input" placeholder="e.g., document_processing_pipeline">
+                    <div class="help-text">Choose a descriptive name for your workflow (use underscores instead of spaces)</div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Tasks</label>
-                    <div id="tasks-container" class="space-y-3">
-                        <!-- Tasks will be added here -->
-                    </div>
-                    <button type="button" onclick="addTask()" class="mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                        <i class="fas fa-plus mr-1"></i>Add Task
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="workflow-description" rows="3" class="form-input" placeholder="What does this workflow do?"></textarea>
+                    <div class="help-text">Optional: Describe what this workflow accomplishes</div>
+                </div>
+                
+                <div style="text-align: right; margin-top: 2rem;">
+                    <button type="button" onclick="nextStep()" class="btn btn-primary">
+                        Next: Add Tasks →
                     </button>
                 </div>
+            </div>
+
+            <!-- Step 2: Add Tasks -->
+            <div id="wizard-step-2" class="wizard-step hidden">
+                <div class="form-group">
+                    <label class="form-label">Tasks</label>
+                    <div id="tasks-container" class="space-y-4">
+                        <!-- Tasks will be added here -->
+                    </div>
+                    <button type="button" onclick="addTask()" class="btn btn-secondary" style="margin-top: 1rem;">
+                        <span class="icon-plus mr-2"></span>Add Task
+                    </button>
+                    <div class="help-text">Add tasks that will run in your workflow. You can specify which tasks depend on others.</div>
+                </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Initial Context (JSON)</label>
-                    <textarea id="workflow-context" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm" placeholder='{"key": "value"}'>{}</textarea>
+                <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                    <button type="button" onclick="previousStep()" class="btn btn-secondary">
+                        ← Back
+                    </button>
+                    <button type="button" onclick="nextStep()" class="btn btn-primary">
+                        Next: Review →
+                    </button>
                 </div>
             </div>
-            
-            <div class="mt-6 flex justify-end space-x-3">
-                <button type="button" onclick="hideCreateWorkflowModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Create Workflow</button>
+
+            <!-- Step 3: Review & Submit -->
+            <div id="wizard-step-3" class="wizard-step hidden">
+                <div class="card" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #3b82f6; padding: 1.5rem;">
+                    <h4 style="margin-bottom: 1rem; display: flex; align-items: center; color: #1e40af;">
+                        <span style="font-size: 1.5rem; margin-right: 0.5rem;">✓</span>
+                        Review Your Workflow
+                    </h4>
+                    <div id="workflow-review" style="color: #1f2937;">
+                        <!-- Review content will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label class="form-label">Initial Context (JSON)</label>
+                    <textarea id="workflow-context" rows="4" class="form-input" placeholder='{"key": "value"}'>{}</textarea>
+                    <div class="help-text">Optional: Provide initial data for your workflow in JSON format</div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                    <button type="button" onclick="previousStep()" class="btn btn-secondary">
+                        ← Back
+                    </button>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <span class="icon-check mr-2"></span>Create Workflow
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Success/Error Message Container -->
+<div id="message-container" style="position: fixed; top: 80px; right: 20px; z-index: 1000; max-width: 400px;"></div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
+    let currentStep = 1;
     let currentFilter = 'all';
     let taskCounter = 0;
     
-    function showCreateWorkflowModal() {
+    function showCreateWorkflowWizard() {
         document.getElementById('create-workflow-modal').classList.remove('hidden');
+        currentStep = 1;
+        updateStepIndicators();
         addTask(); // Add first task by default
     }
     
-    function hideCreateWorkflowModal() {
+    function hideCreateWorkflowWizard() {
         document.getElementById('create-workflow-modal').classList.add('hidden');
         document.getElementById('create-workflow-form').reset();
         document.getElementById('tasks-container').innerHTML = '';
         taskCounter = 0;
+        currentStep = 1;
+        updateStepIndicators();
+    }
+    
+    function nextStep() {
+        // Validation for step 1
+        if (currentStep === 1) {
+            const name = document.getElementById('workflow-name').value;
+            if (!name) {
+                showMessage('Please enter a workflow name', 'error');
+                return;
+            }
+        }
+        
+        // Validation for step 2
+        if (currentStep === 2) {
+            const tasks = document.querySelectorAll('#tasks-container > div');
+            if (tasks.length === 0) {
+                showMessage('Please add at least one task', 'error');
+                return;
+            }
+            
+            // Check if all task names are filled
+            let hasEmptyTask = false;
+            tasks.forEach(task => {
+                const taskName = task.querySelector('.task-name').value;
+                if (!taskName) hasEmptyTask = true;
+            });
+            
+            if (hasEmptyTask) {
+                showMessage('Please fill in all task names', 'error');
+                return;
+            }
+            
+            // Update review
+            updateReview();
+        }
+        
+        if (currentStep < 3) {
+            document.getElementById(`wizard-step-${currentStep}`).classList.add('hidden');
+            currentStep++;
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            updateStepIndicators();
+        }
+    }
+    
+    function previousStep() {
+        if (currentStep > 1) {
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            document.getElementById(`wizard-step-${currentStep}`).classList.add('hidden');
+            currentStep--;
+            document.getElementById(`wizard-step-${currentStep}`).classList.remove('hidden');
+            updateStepIndicators();
+        }
+    }
+    
+    function updateStepIndicators() {
+        for (let i = 1; i <= 3; i++) {
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            indicator.classList.remove('active', 'completed');
+            if (i < currentStep) {
+                indicator.classList.add('completed');
+            } else if (i === currentStep) {
+                indicator.classList.add('active');
+            }
+        }
     }
     
     function addTask() {
         const container = document.getElementById('tasks-container');
         const taskId = taskCounter++;
         const taskHtml = `
-            <div class="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg" id="task-${taskId}">
-                <input type="text" placeholder="Task name" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm task-name" required>
-                <input type="text" placeholder="Dependencies (comma-separated)" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm task-deps" placeholder="task1,task2">
-                <button type="button" onclick="removeTask(${taskId})" class="text-red-600 hover:text-red-800">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <div class="card" style="padding: 1rem; background: #f9fafb;" id="task-${taskId}">
+                <div class="flex justify-between items-center" style="margin-bottom: 0.75rem;">
+                    <strong style="color: #1f2937;">Task ${taskId + 1}</strong>
+                    <button type="button" onclick="removeTask(${taskId})" class="btn btn-secondary" style="padding: 0.25rem 0.75rem;">
+                        🗑️ Remove
+                    </button>
+                </div>
+                <input type="text" placeholder="Task name (e.g., extract_data)" class="form-input task-name" required style="margin-bottom: 0.5rem;">
+                <input type="text" placeholder="Dependencies (comma-separated, e.g., task1,task2)" class="form-input task-deps" style="font-size: 0.875rem;">
+                <div class="help-text">Dependencies: Leave empty if this task can run immediately</div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', taskHtml);
     }
     
     function removeTask(taskId) {
-        document.getElementById(`task-${taskId}`).remove();
+        const task = document.getElementById(`task-${taskId}`);
+        if (task) {
+            task.remove();
+        }
+    }
+    
+    function updateReview() {
+        const name = document.getElementById('workflow-name').value;
+        const description = document.getElementById('workflow-description').value;
+        const taskElements = document.querySelectorAll('#tasks-container > div');
+        
+        let reviewHTML = `
+            <div style="margin-bottom: 1rem;">
+                <strong>Name:</strong> ${name}
+            </div>
+        `;
+        
+        if (description) {
+            reviewHTML += `
+                <div style="margin-bottom: 1rem;">
+                    <strong>Description:</strong> ${description}
+                </div>
+            `;
+        }
+        
+        reviewHTML += `<div style="margin-bottom: 0.5rem;"><strong>Tasks (${taskElements.length}):</strong></div><ul style="list-style: none; padding-left: 0;">`;
+        
+        taskElements.forEach((el, index) => {
+            const taskName = el.querySelector('.task-name').value;
+            const deps = el.querySelector('.task-deps').value;
+            reviewHTML += `<li style="padding: 0.5rem; background: white; margin-bottom: 0.5rem; border-radius: 4px;">
+                <strong>${index + 1}.</strong> ${taskName}
+                ${deps ? `<span style="color: #6b7280; font-size: 0.875rem;"> → depends on: ${deps}</span>` : ''}
+            </li>`;
+        });
+        
+        reviewHTML += `</ul>`;
+        document.getElementById('workflow-review').innerHTML = reviewHTML;
     }
     
     async function createWorkflow(event) {
         event.preventDefault();
+        
+        // Show loading
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalHTML = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<div class="spinner" style="margin: 0 auto;"></div>';
+        submitBtn.disabled = true;
         
         const name = document.getElementById('workflow-name').value;
         const contextStr = document.getElementById('workflow-context').value;
@@ -137,7 +327,9 @@
         try {
             context = JSON.parse(contextStr);
         } catch (e) {
-            alert('Invalid JSON in context field');
+            showMessage('Invalid JSON in context field', 'error');
+            submitBtn.innerHTML = originalHTML;
+            submitBtn.disabled = false;
             return;
         }
         
@@ -152,26 +344,45 @@
             const result = await response.json();
             
             if (response.ok) {
-                hideCreateWorkflowModal();
+                hideCreateWorkflowWizard();
+                showMessage(`✅ Workflow created successfully! ID: ${result.id}`, 'success');
                 loadWorkflows();
-                alert(`Workflow created successfully! ID: ${result.id}`);
             } else {
-                alert(`Error: ${result.error}`);
+                showMessage(`❌ Error: ${result.error}`, 'error');
             }
         } catch (error) {
-            alert(`Failed to create workflow: ${error.message}`);
+            showMessage(`❌ Failed to create workflow: ${error.message}`, 'error');
+        } finally {
+            submitBtn.innerHTML = originalHTML;
+            submitBtn.disabled = false;
         }
     }
     
+    function showMessage(message, type) {
+        const container = document.getElementById('message-container');
+        const messageClass = type === 'success' ? 'success-message' : 'error-message';
+        const messageHTML = `
+            <div class="${messageClass}" style="animation: slideIn 0.3s ease;">
+                ${message}
+            </div>
+        `;
+        container.innerHTML = messageHTML;
+        
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 5000);
+    }
+    
     async function loadWorkflows() {
-        // In a real implementation, this would fetch from an API endpoint
-        // For now, we'll show a message
         const container = document.getElementById('workflows-container');
         container.innerHTML = `
-            <div class="p-8 text-center text-gray-500">
-                <i class="fas fa-info-circle text-5xl mb-3"></i>
-                <p class="text-lg">Workflows will appear here once created</p>
-                <p class="text-sm mt-2">Use the Create Workflow button to submit your first workflow</p>
+            <div class="empty-state" style="padding: 3rem 2rem;">
+                <div style="font-size: 5rem; margin-bottom: 1rem; opacity: 0.5;">📋</div>
+                <h4 style="margin-bottom: 0.5rem; color: #1f2937;">No workflows yet</h4>
+                <p style="color: #6b7280; margin-bottom: 1.5rem;">Workflows you create will appear here. Get started by creating your first workflow!</p>
+                <button onclick="showCreateWorkflowWizard()" class="btn btn-primary">
+                    <span class="icon-plus mr-2"></span>Create First Workflow
+                </button>
             </div>
         `;
     }
@@ -183,9 +394,11 @@
         ['all', 'running', 'completed', 'failed'].forEach(f => {
             const btn = document.getElementById(`filter-${f}`);
             if (f === filter.toLowerCase()) {
-                btn.className = 'px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800';
+                btn.className = 'btn btn-primary';
+                btn.style.padding = '0.5rem 1rem';
             } else {
-                btn.className = 'px-3 py-1 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100';
+                btn.className = 'btn btn-secondary';
+                btn.style.padding = '0.5rem 1rem';
             }
         });
         
@@ -195,4 +408,17 @@
     // Initialize
     loadWorkflows();
 </script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+</style>
 {% endblock %}
