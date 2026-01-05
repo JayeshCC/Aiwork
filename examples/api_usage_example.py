@@ -8,16 +8,16 @@ This script demonstrates how to:
 3. Retrieve task results via GET /task/{id}
 
 Start the server:
-    python -m aiwork.api.server
+    python -m aiwork.api
     
     # Or with custom port:
-    python -m aiwork.api.server --port 8080
+    python -m aiwork.api --port 8080
     
     # Or with debug mode:
-    python -m aiwork.api.server --debug
+    python -m aiwork.api --debug
     
     # Or with auto port finding:
-    python -m aiwork.api.server --auto-port
+    python -m aiwork.api --auto-port
 
 Then run this example in another terminal:
     python examples/api_usage_example.py

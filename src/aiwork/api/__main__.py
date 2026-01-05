@@ -42,7 +42,7 @@ if __name__ == "__main__":
         elif args[i] in ["-h", "--help"]:
             print("AIWork API Server")
             print("\nUsage:")
-            print("  python -m aiwork.api.server [options]")
+            print("  python -m aiwork.api [options]")
             print("\nOptions:")
             print("  --port PORT     Port to bind to (default: 5000)")
             print("  --debug         Enable debug mode")

@@ -62,7 +62,7 @@ def test_server_handles_port_conflict():
     time.sleep(0.5)
     
     # Try to start second server on same port - should fail gracefully
-    with pytest.raises(OSError, match="already in use"):
+    with pytest.raises(OSError, match=r"Port \d+ is already in use\. Use --auto-port to find alternative\."):
         start_server(host="127.0.0.1", port=port, auto_port=False)
 
 
@@ -96,7 +96,7 @@ def test_find_available_port_range():
         def run_server(p=port):
             app.run(host="127.0.0.1", port=p, debug=False, use_reloader=False)
         
-        thread = threading.Thread(target=lambda p=port: run_server(p), daemon=True)
+        thread = threading.Thread(target=run_server, daemon=True)
         thread.start()
         threads.append(thread)
         occupied_ports.append(port)
@@ -106,4 +106,4 @@ def test_find_available_port_range():
     # Find available port should skip occupied ones
     available = find_available_port(start_port, max_attempts=10)
     assert available is not None
-    assert available not in occupied_ports or available >= start_port + 3
+    assert available >= start_port + 3

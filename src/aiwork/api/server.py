@@ -269,7 +269,6 @@ def is_port_available(port, host="0.0.0.0"):
     import socket
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((host, port))
             return True
     except OSError:
@@ -300,7 +299,7 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     
     Usage:
         # From command line
-        python -m aiwork.api.server
+        python -m aiwork.api
         
         # Programmatically
         from aiwork.api.server import start_server
@@ -316,7 +315,7 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     if not is_port_available(port, host):
         if auto_port:
             print(f"⚠️  Port {port} is already in use")
-            new_port = find_available_port(port + 1)
+            new_port = find_available_port(port + 1, host=host)
             if new_port:
                 print(f"✅ Using alternative port: {new_port}")
                 port = new_port
@@ -351,7 +350,7 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     except OSError as e:
         if "Address already in use" in str(e):
             print(f"\n❌ Error: Port {port} is already in use")
-            print(f"💡 Try a different port: python -m aiwork.api.server --port 8080")
+            print(f"💡 Try a different port: python -m aiwork.api --port 8080")
             print(f"💡 Or kill the process using port {port}")
         else:
             print(f"\n❌ Error starting server: {e}")
@@ -375,8 +374,8 @@ if __name__ == "__main__":
             try:
                 port = int(args[i + 1])
                 i += 2
-            except (IndexError, ValueError):
-                print("❌ Invalid port. Usage: python -m aiwork.api.server --port 8080")
+            except ValueError:
+                print("❌ Invalid port. Usage: python -m aiwork.api --port 8080")
                 sys.exit(1)
         elif args[i] == "--debug":
             debug = True
@@ -387,7 +386,7 @@ if __name__ == "__main__":
         elif args[i] in ["-h", "--help"]:
             print("AIWork API Server")
             print("\nUsage:")
-            print("  python -m aiwork.api.server [options]")
+            print("  python -m aiwork.api [options]")
             print("\nOptions:")
             print("  --port PORT     Port to bind to (default: 5000)")
             print("  --debug         Enable debug mode")
