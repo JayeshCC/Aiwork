@@ -276,10 +276,10 @@ def is_port_available(port, host="0.0.0.0"):
         return False
 
 
-def find_available_port(start_port=5000, max_attempts=10):
+def find_available_port(start_port=5000, max_attempts=10, host="0.0.0.0"):
     """Find an available port starting from start_port."""
     for port in range(start_port, start_port + max_attempts):
-        if is_port_available(port):
+        if is_port_available(port, host):
             return port
     return None
 
