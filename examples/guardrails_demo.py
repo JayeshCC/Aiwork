@@ -90,7 +90,12 @@ except ValueError as e:
 print("=== Example 3: Invalid Output (Fails Output Guardrail) ===\n")
 
 def bad_handler(ctx):
-    """Returns invalid format (missing 'result' key)."""
+    """
+    Returns invalid format (missing 'result' key).
+    
+    This handler intentionally produces invalid output to demonstrate
+    output guardrail validation failure.
+    """
     return {"wrong_key": "value"}
 
 task3 = Task(
