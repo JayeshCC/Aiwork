@@ -324,7 +324,7 @@ pytest tests/test_integrations.py  # Integration tests
 
 ## 🤝 Contributing
 
-We welcome contributions!  for:
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
 - Code style guidelines
 - Development setup
 - Pull request process
