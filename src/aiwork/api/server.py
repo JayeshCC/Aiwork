@@ -290,8 +290,12 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     
     Args:
         host: Host to bind to (default: 0.0.0.0 for external access)
+              WARNING: 0.0.0.0 binds to all network interfaces. 
+              For production, use 127.0.0.1 or a specific IP.
         port: Port to bind to (default: 5000)
         debug: Enable Flask debug mode (default: False)
+               WARNING: Never enable debug mode in production as it allows
+               arbitrary code execution via the debugger.
         auto_port: Automatically find available port if specified port is taken
     
     Usage:
@@ -301,6 +305,12 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
         # Programmatically
         from aiwork.api.server import start_server
         start_server(port=8080)
+    
+    Security Notes:
+        - This is a development server, not intended for production
+        - Use a production WSGI server (gunicorn, uwsgi) for production
+        - Never enable debug mode in production environments
+        - Consider using 127.0.0.1 instead of 0.0.0.0 for local-only access
     """
     # Check port availability
     if not is_port_available(port, host):
@@ -322,9 +332,21 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     print(f"   • POST /workflow            - Submit workflow")
     print(f"   • GET  /workflow/<id>       - Get workflow status")
     print(f"   • GET  /workflow/<id>/task/<name> - Get task status")
+    
+    if debug:
+        print(f"\n⚠️  WARNING: Debug mode is ENABLED")
+        print(f"   This should NEVER be used in production!")
+        print(f"   Debug mode allows arbitrary code execution via the debugger.")
+    
+    if host == "0.0.0.0":
+        print(f"\n⚠️  INFO: Server is binding to all network interfaces (0.0.0.0)")
+        print(f"   For production, use 127.0.0.1 or a specific IP address.")
+    
     print(f"\n💡 Press Ctrl+C to stop")
     
     try:
+        # Security note: Flask development server is not suitable for production.
+        # The debug parameter is explicitly controlled by user input (defaults to False).
         app.run(host=host, port=port, debug=debug, threaded=True)
     except OSError as e:
         if "Address already in use" in str(e):
