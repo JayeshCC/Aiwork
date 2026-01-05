@@ -1,10 +1,5 @@
 # 🚀 AIWork: Lightweight Agentic Framework
 
-![Python Version](https://img.shields.io/badge/python-3.8%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Status](https://img.shields.io/badge/status-production--ready-success)
-![Intel Optimized](https://img.shields.io/badge/Intel-OpenVINO%20Optimized-0071C5)
-
 > **Build your own LangChain/CrewAI from scratch, optimized for Intel hardware.**
 
 AIWork is a lightweight, production-ready Python framework for building intelligent agentic workflows without the complexity of heavyweight frameworks. Designed for the **Intel AI Innovation Challenge 2025-26**, it combines simplicity with power, enabling developers to create sophisticated AI systems that run efficiently on Intel® hardware.
