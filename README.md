@@ -60,7 +60,7 @@ AIWork directly addresses **Problem 2: Build-Your-Own AI Agent Framework** requi
 | **Define and execute task flows (DAG)** | `Flow` class with topological sort, dependency resolution | ✅ Complete |
 | **Input handlers, tools/actions, output actions** | `Task` handlers, `Agent` tools, `ToolRegistry` | ✅ Complete |
 | **Memory, guardrails, observability** | `VectorMemory`, `Guardrail`, `MetricsRegistry` | ✅ Complete |
-| **Ingress (REST/queue)** | FastAPI REST API, Kafka adapter interface | ✅ Complete |
+| **Ingress (REST/queue)** | Flask REST API with workflow submission and monitoring, Kafka adapter interface | ✅ Complete |
 | **Apache components** | Kafka adapter (stub), Airflow DAG exporter | ✅ Interface Ready |
 | **Intel® OpenVINO™ optimization** | OpenVINO adapter interface, benchmark simulation | ⚠️ Proof-of-Concept |
 | **Two reference agents** | Document Processor, Customer Support Bot | ✅ Complete |
@@ -219,16 +219,39 @@ Deploy as a microservice:
 
 ```bash
 python -m aiwork.api.server
+# Or use the command:
+aiwork-server
 ```
 
+The server runs on http://localhost:5000 and provides the following endpoints:
+
+**Submit a workflow:**
 ```bash
-curl -X POST http://localhost:8000/execute \
+curl -X POST http://localhost:5000/workflow \
   -H "Content-Type: application/json" \
   -d '{
-    "flow_name": "document_pipeline",
-    "tasks": [{"name": "extract"}, {"name": "analyze", "depends_on": ["extract"]}],
-    "input_context": {"doc_id": "12345"}
+    "name": "document_pipeline",
+    "tasks": [
+      {"name": "extract", "depends_on": []},
+      {"name": "analyze", "depends_on": ["extract"]}
+    ],
+    "context": {"doc_id": "12345"}
   }'
+```
+
+**Check workflow status:**
+```bash
+curl http://localhost:5000/workflow/{workflow_id}
+```
+
+**Get task result:**
+```bash
+curl http://localhost:5000/task/{task_id}
+```
+
+**Health check:**
+```bash
+curl http://localhost:5000/health
 ```
 
 ---
