@@ -5,6 +5,12 @@ import warnings
 class Task:
     """
     Atomic unit of work in the AIWork framework.
+    
+    Supports two-stage validation:
+    - Input guardrails: Validate BEFORE execution (context/inputs)
+    - Output guardrails: Validate AFTER execution (results)
+    
+    Both are optional. Failed guardrails trigger retries.
     """
     def __init__(
         self,
@@ -14,6 +20,8 @@ class Task:
         handler: Callable[[Dict[str, Any]], Any] = None,
         retries: int = 3,
         guardrails: list = None,
+        input_guardrails: list = None,
+        verbose: bool = False,
     ):
         self.id = str(uuid.uuid4())
         self.name = name
@@ -26,6 +34,8 @@ class Task:
         self.handler = handler
         self.retries = retries
         self.guardrails = guardrails or []
+        self.input_guardrails = input_guardrails or []
+        self.verbose = verbose
         self.status = "PENDING"
         self.output = None
         self.error = None
