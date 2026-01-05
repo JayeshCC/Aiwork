@@ -44,21 +44,47 @@ class LocalExecutor(BaseExecutor):
         attempt = 0
         start_time = time.time()
         
+        # Check if task has verbose mode enabled
+        verbose = getattr(task, 'verbose', False)
+        
         while attempt <= task.retries:
             try:
                 attempt += 1
                 
-                # --- Input Guardrails (Future) ---
-                # if task.input_guardrails: ...
+                # --- Input Guardrails ---
+                input_guardrails = getattr(task, 'input_guardrails', [])
+                if input_guardrails:
+                    if verbose:
+                        print(f"    [Task {task.name}] Validating input with {len(input_guardrails)} guardrails...")
+                    
+                    for guard in input_guardrails:
+                        if not guard.validate(context):
+                            error_msg = f"Input guardrail '{guard.name}' failed validation"
+                            if verbose:
+                                print(f"    [Task {task.name}] ❌ {error_msg}")
+                            raise ValueError(error_msg)
+                    
+                    if verbose:
+                        print(f"    [Task {task.name}] ✅ Input validation passed")
 
                 # Execute the task's core logic
                 result = task._run_handler(context)
 
                 # --- Output Guardrails ---
-                if hasattr(task, 'guardrails') and task.guardrails:
-                    for guard in task.guardrails:
+                output_guardrails = getattr(task, 'guardrails', [])
+                if output_guardrails:
+                    if verbose:
+                        print(f"    [Task {task.name}] Validating output with {len(output_guardrails)} guardrails...")
+                    
+                    for guard in output_guardrails:
                         if not guard.validate(result):
-                            raise ValueError(f"Guardrail '{guard.name}' failed validation.")
+                            error_msg = f"Output guardrail '{guard.name}' failed validation"
+                            if verbose:
+                                print(f"    [Task {task.name}] ❌ {error_msg}")
+                            raise ValueError(error_msg)
+                    
+                    if verbose:
+                        print(f"    [Task {task.name}] ✅ Output validation passed")
 
                 task.output = result
                 task.status = "COMPLETED"

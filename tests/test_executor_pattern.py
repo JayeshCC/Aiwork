@@ -122,7 +122,7 @@ class TestExecutorPattern(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             executor.execute(task, {})
         
-        self.assertIn("Guardrail 'positive' failed", str(cm.exception))
+        self.assertIn("Output guardrail 'positive' failed", str(cm.exception))
         self.assertEqual(task.status, "FAILED")
     
     def test_orchestrator_uses_executor(self):
