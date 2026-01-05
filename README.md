@@ -7,7 +7,7 @@
 
 > **Build your own LangChain/CrewAI from scratch, optimized for Intel hardware.**
 
-AIWork is a lightweight, production-ready Python framework for building intelligent agentic workflows without the complexity of heavyweight frameworks. Designed for the **Intel AI Innovation Challenge 2024**, it combines simplicity with power, enabling developers to create sophisticated AI systems that run efficiently on Intel® hardware.
+AIWork is a lightweight, production-ready Python framework for building intelligent agentic workflows without the complexity of heavyweight frameworks. Designed for the **Intel AI Innovation Challenge 2025-26**, it combines simplicity with power, enabling developers to create sophisticated AI systems that run efficiently on Intel® hardware.
 
 ---
 
@@ -16,7 +16,6 @@ AIWork is a lightweight, production-ready Python framework for building intellig
 - **Lightweight & Fast**: Minimal dependencies, maximum performance
 - **Agent-Centric Design**: Define AI workers with roles, goals, and tools
 - **Hybrid Orchestration**: Static DAGs + dynamic task injection
-- **Intel Optimized**: Built-in OpenVINO integration for 3.7x speedup
 - **Production Ready**: Retry logic, guardrails, state management
 - **Framework-Agnostic**: No vendor lock-in, build your own patterns
 - **Apache Integration**: Kafka messaging, Airflow DAG export
@@ -62,7 +61,6 @@ AIWork directly addresses **Problem 2: Build-Your-Own AI Agent Framework** requi
 | **Memory, guardrails, observability** | `VectorMemory`, `Guardrail`, `MetricsRegistry` | ✅ Complete |
 | **Ingress (REST/queue)** | Flask REST API with workflow submission and monitoring, Kafka adapter interface | ✅ Complete |
 | **Apache components** | Kafka adapter (stub), Airflow DAG exporter | ✅ Interface Ready |
-| **Intel® OpenVINO™ optimization** | OpenVINO adapter interface, benchmark simulation | ✅ Proof-of-Concept |
 | **Two reference agents** | Document Processor, Customer Support Bot | ✅ Complete |
 | **Design doc + benchmarks** | Architecture docs, performance benchmarks | ✅ Complete |
 | **Reliable execution (retries/timeouts)** | Task retry logic, error handling | ✅ Complete |
@@ -73,11 +71,10 @@ AIWork directly addresses **Problem 2: Build-Your-Own AI Agent Framework** requi
 ✅ **Framework SDK**: Complete Python package with APIs for flows, tools, and policies  
 ✅ **Two Reference Agents**: Document processor (OCR + analysis) and customer support bot  
 ✅ **Design Documentation**: Complete architecture, API reference, deployment guides  
-✅ **Performance Benchmarks**: Demonstrated 3.7x speedup with OpenVINO optimization  
 ✅ **Apache Integration**: Kafka interface, Airflow DAG exporter  
 ✅ **Kafka Integration**: Interface complete, full implementation in roadmap (Phase 1)
 
-**Transparency Note**: OpenVINO and Kafka integrations are currently proof-of-concept interfaces demonstrating the architecture. Full production implementations are planned for Phase 1 (Q1 2025). See [ROADMAP.md](docs/ROADMAP.md) for details.
+**Transparency Note**: Kafka integration is currently proof-of-concept interfaces demonstrating the architecture. Full production implementations are planned for Phase 1 (Q1 2025). See [ROADMAP.md](docs/ROADMAP.md) for details.
 
 ---
 
