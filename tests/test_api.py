@@ -1,7 +1,7 @@
 import pytest
 import json
 import time
-from aiwork.api.server import app, workflow_store, task_store
+from aiwork.api.server import app, workflow_store, task_store, store_lock
 
 
 @pytest.fixture
@@ -11,8 +11,9 @@ def client():
     with app.test_client() as client:
         yield client
     # Clear stores after each test
-    workflow_store.clear()
-    task_store.clear()
+    with store_lock:
+        workflow_store.clear()
+        task_store.clear()
 
 
 def test_health_check(client):

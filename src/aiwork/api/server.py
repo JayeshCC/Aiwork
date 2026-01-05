@@ -39,47 +39,52 @@ app = Flask(__name__)
 workflow_store: Dict[str, Dict[str, Any]] = {}
 task_store: Dict[str, Dict[str, Any]] = {}
 
+# Thread lock for thread-safe access to stores
+store_lock = threading.Lock()
+
 
 def execute_workflow_async(workflow_id: str, flow: Flow, initial_context: Dict[str, Any]):
     """
     Execute a workflow asynchronously and update the workflow store with results.
     """
     try:
-        # Check if workflow still exists (in case it was cleared by test)
-        if workflow_id not in workflow_store:
-            return
-            
-        workflow_store[workflow_id]["status"] = "RUNNING"
+        # Update status to RUNNING
+        with store_lock:
+            if workflow_id not in workflow_store:
+                return
+            workflow_store[workflow_id]["status"] = "RUNNING"
+        
+        # Execute workflow (this is the long-running operation)
         orchestrator = Orchestrator()
         result = orchestrator.execute(flow, initial_context)
         
-        # Check again before updating
-        if workflow_id not in workflow_store:
-            return
-        
-        # Update workflow status
-        workflow_store[workflow_id]["status"] = "COMPLETED"
-        workflow_store[workflow_id]["result"] = result
-        
-        # Store individual task results
-        if "outputs" in result:
-            for task_name, task_output in result["outputs"].items():
-                # Find the task object to get its ID and other metadata
-                if task_name in flow.tasks:
-                    task_obj = flow.tasks[task_name]
-                    task_store[task_obj.id] = {
-                        "id": task_obj.id,
-                        "name": task_obj.name,
-                        "status": task_obj.status,
-                        "output": task_obj.output,
-                        "error": task_obj.error
-                    }
+        # Update workflow status to COMPLETED
+        with store_lock:
+            if workflow_id not in workflow_store:
+                return
+            workflow_store[workflow_id]["status"] = "COMPLETED"
+            workflow_store[workflow_id]["result"] = result
+            
+            # Store individual task results
+            if "outputs" in result:
+                for task_name, task_output in result["outputs"].items():
+                    # Find the task object to get its ID and other metadata
+                    if task_name in flow.tasks:
+                        task_obj = flow.tasks[task_name]
+                        task_store[task_obj.id] = {
+                            "id": task_obj.id,
+                            "name": task_obj.name,
+                            "status": task_obj.status,
+                            "output": task_obj.output,
+                            "error": task_obj.error
+                        }
     
     except Exception as e:
-        # Check if workflow still exists before updating error
-        if workflow_id in workflow_store:
-            workflow_store[workflow_id]["status"] = "FAILED"
-            workflow_store[workflow_id]["error"] = str(e)
+        # Update workflow status to FAILED
+        with store_lock:
+            if workflow_id in workflow_store:
+                workflow_store[workflow_id]["status"] = "FAILED"
+                workflow_store[workflow_id]["error"] = str(e)
 
 
 @app.route("/health", methods=["GET"])
@@ -197,24 +202,25 @@ def get_workflow_status(workflow_id: str):
         "error": ""     # Present if FAILED
     }
     """
-    if workflow_id not in workflow_store:
-        return jsonify({
-            "error": f"Workflow {workflow_id} not found"
-        }), 404
-    
-    workflow = workflow_store[workflow_id]
-    
-    response = {
-        "id": workflow["id"],
-        "name": workflow["name"],
-        "status": workflow["status"]
-    }
-    
-    if workflow["status"] == "COMPLETED" and workflow["result"]:
-        response["outputs"] = workflow["result"].get("outputs", {})
-    
-    if workflow["status"] == "FAILED" and workflow["error"]:
-        response["error"] = workflow["error"]
+    with store_lock:
+        if workflow_id not in workflow_store:
+            return jsonify({
+                "error": f"Workflow {workflow_id} not found"
+            }), 404
+        
+        workflow = workflow_store[workflow_id]
+        
+        response = {
+            "id": workflow["id"],
+            "name": workflow["name"],
+            "status": workflow["status"]
+        }
+        
+        if workflow["status"] == "COMPLETED" and workflow["result"]:
+            response["outputs"] = workflow["result"].get("outputs", {})
+        
+        if workflow["status"] == "FAILED" and workflow["error"]:
+            response["error"] = workflow["error"]
     
     return jsonify(response), 200
 
@@ -233,12 +239,13 @@ def get_task_result(task_id: str):
         "error": ""     # Present if FAILED
     }
     """
-    if task_id not in task_store:
-        return jsonify({
-            "error": f"Task {task_id} not found"
-        }), 404
-    
-    task = task_store[task_id]
+    with store_lock:
+        if task_id not in task_store:
+            return jsonify({
+                "error": f"Task {task_id} not found"
+            }), 404
+        
+        task = task_store[task_id]
     
     return jsonify(task), 200
 
