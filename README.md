@@ -499,7 +499,6 @@ This transparent approach demonstrates:
 
 Built with:
 - **Intel® OpenVINO™** for ML acceleration
-- **Intel® DevCloud** for benchmarking
 - **FastAPI** for REST API
 - **Apache Kafka** for messaging
 - **Apache Airflow** for DAG export
