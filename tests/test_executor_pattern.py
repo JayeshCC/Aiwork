@@ -165,7 +165,13 @@ class TestExecutorPattern(unittest.TestCase):
         self.assertIn("custom_task", custom_executor.executed_tasks)
     
     def test_task_internal_run_handler_method(self):
-        """Test _run_handler is internal and works correctly."""
+        """
+        Test _run_handler is internal and works correctly.
+        
+        This test intentionally calls the internal _run_handler method
+        to verify the task's core logic is separated from execution concerns.
+        In production, this method is called by executors, not directly.
+        """
         def handler(ctx):
             return ctx.get("input", "default")
         

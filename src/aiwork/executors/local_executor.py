@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Callable
 import time
 from concurrent.futures import ThreadPoolExecutor
+from aiwork.core.observability import metrics
 from .base_executor import BaseExecutor
 
 
@@ -18,9 +19,11 @@ class LocalExecutor(BaseExecutor):
         Initialize the LocalExecutor.
         
         Args:
-            max_workers: Maximum number of workers for parallel execution (reserved for future use)
+            max_workers: Maximum number of workers for parallel execution.
+                        Used by execute_tasks() for backward compatibility.
         """
         self.max_workers = max_workers
+        # ThreadPoolExecutor is used by the legacy execute_tasks() method
         self.pool = ThreadPoolExecutor(max_workers=max_workers)
     
     def execute(self, task: 'Task', context: Dict[str, Any]) -> Any:
@@ -37,8 +40,6 @@ class LocalExecutor(BaseExecutor):
         Raises:
             Exception: If task execution fails after all retries
         """
-        from aiwork.core.observability import metrics
-        
         task.status = "RUNNING"
         attempt = 0
         start_time = time.time()
