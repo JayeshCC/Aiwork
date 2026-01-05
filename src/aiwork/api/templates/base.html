@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AIWork Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Icon replacements using Unicode symbols */
+        .icon-robot::before { content: '🤖'; font-size: inherit; }
+        .icon-home::before { content: '🏠'; font-size: inherit; }
+        .icon-workflow::before { content: '📊'; font-size: inherit; }
+        .icon-users::before { content: '👥'; font-size: inherit; }
+        .icon-code::before { content: '💻'; font-size: inherit; }
+        .icon-play::before { content: '▶️'; font-size: inherit; }
+        .icon-check::before { content: '✅'; font-size: inherit; }
+        .icon-plus::before { content: '➕'; font-size: inherit; }
+        .icon-settings::before { content: '⚙️'; font-size: inherit; }
+        .icon-inbox::before { content: '📥'; font-size: inherit; }
+        .icon-chart::before { content: '📈'; font-size: inherit; }
+        .icon-doc::before { content: '📄'; font-size: inherit; }
+        .icon-shield::before { content: '🛡️'; font-size: inherit; }
+        .icon-gavel::before { content: '⚖️'; font-size: inherit; }
+        .icon-brain::before { content: '🧠'; font-size: inherit; }
+        .icon-toolbox::before { content: '🧰'; font-size: inherit; }
+        .icon-memory::before { content: '💾'; font-size: inherit; }
+        .icon-terminal::before { content: '⌨️'; font-size: inherit; }
+        .icon-book::before { content: '📖'; font-size: inherit; }
+        .icon-info::before { content: 'ℹ️'; font-size: inherit; }
+        .icon-send::before { content: '📤'; font-size: inherit; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="icon-robot" style="font-size: 2rem; margin-right: 0.5rem;"></span>
+                <h1>AIWork</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="/ui" class="nav-link {% if request.endpoint == 'ui_dashboard' %}active{% endif %}">
+                    <span class="icon-home mr-2"></span>Dashboard
+                </a>
+                <a href="/ui/workflows" class="nav-link {% if request.endpoint == 'ui_workflows' %}active{% endif %}">
+                    <span class="icon-workflow mr-2"></span>Workflows
+                </a>
+                <a href="/ui/agents" class="nav-link {% if request.endpoint == 'ui_agents' %}active{% endif %}">
+                    <span class="icon-users mr-2"></span>Agents
+                </a>
+                <a href="/ui/api-explorer" class="nav-link {% if request.endpoint == 'ui_api_explorer' %}active{% endif %}">
+                    <span class="icon-code mr-2"></span>API Explorer
+                </a>
+            </div>
+            <div class="nav-status">
+                <span class="status-dot"></span>
+                <span id="health-text">System Healthy</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>AIWork Framework v0.1.0 | Built for Intel AI Innovation Challenge 2025-26</p>
+    </footer>
+
+    <!-- Health Check Script -->
+    <script>
+        async function checkHealth() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                const statusEl = document.getElementById('health-text');
+                if (data.status === 'healthy') {
+                    statusEl.textContent = 'System Healthy';
+                    statusEl.style.color = '#111827';
+                } else {
+                    statusEl.textContent = 'System Error';
+                    statusEl.style.color = '#ef4444';
+                }
+            } catch (error) {
+                const statusEl = document.getElementById('health-text');
+                statusEl.textContent = 'API Offline';
+                statusEl.style.color = '#ef4444';
+            }
+        }
+        
+        // Check health every 10 seconds
+        checkHealth();
+        setInterval(checkHealth, 10000);
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

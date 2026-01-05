@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Agents - AIWork{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-0">
+    <!-- Header -->
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900">AI Agents</h2>
+        <p class="mt-1 text-sm text-gray-600">Explore and manage your AI agents</p>
+    </div>
+
+    <!-- Agents Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Document Processor Agent -->
+        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-file-alt text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Document Processor</h3>
+                        <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Extract accurate text from documents using OpenVINO hardware acceleration. Specialized in OCR and document analysis.</p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-bullseye text-blue-600 mr-2"></i>
+                        <span><strong>Goal:</strong> Extract text with 99.2% accuracy</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-tools text-blue-600 mr-2"></i>
+                        <span><strong>Tools:</strong> OpenVINO OCR, Tesseract</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-chart-line text-blue-600 mr-2"></i>
+                        <span><strong>Performance:</strong> 3.7x speedup</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <button onclick="viewAgentDetails('document_processor')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View Details →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Analyst Agent -->
+        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Financial Analyst</h3>
+                        <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Analyze financial data, detect irregularities, and ensure compliance. Expert with 15+ years experience.</p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-bullseye text-green-600 mr-2"></i>
+                        <span><strong>Goal:</strong> Analyze and ensure compliance</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-tools text-green-600 mr-2"></i>
+                        <span><strong>Tools:</strong> NLP Parser, Risk Calculator</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-shield-alt text-green-600 mr-2"></i>
+                        <span><strong>Specialty:</strong> Fraud detection</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <button onclick="viewAgentDetails('financial_analyst')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View Details →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance Officer Agent -->
+        <div class="bg-white shadow rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div class="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center">
+                        <i class="fas fa-gavel text-2xl text-purple-600"></i>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Compliance Officer</h3>
+                        <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">Active</span>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">Audit high-value transactions for regulatory compliance. Strict enforcer of company policy and regulations.</p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-bullseye text-purple-600 mr-2"></i>
+                        <span><strong>Goal:</strong> Ensure regulatory compliance</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-tools text-purple-600 mr-2"></i>
+                        <span><strong>Tools:</strong> Compliance Checker</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fas fa-check-circle text-purple-600 mr-2"></i>
+                        <span><strong>Specialty:</strong> Transaction auditing</span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <button onclick="viewAgentDetails('compliance_officer')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View Details →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Details Section -->
+    <div class="mt-8 bg-white shadow rounded-lg p-6">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">How Agents Work</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-brain text-3xl text-blue-600"></i>
+                </div>
+                <h4 class="font-semibold text-gray-900 mb-2">Specialized Skills</h4>
+                <p class="text-sm text-gray-600">Each agent has a specific role, goal, and backstory that guides their behavior and decision-making.</p>
+            </div>
+            <div class="text-center">
+                <div class="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-toolbox text-3xl text-green-600"></i>
+                </div>
+                <h4 class="font-semibold text-gray-900 mb-2">Equipped with Tools</h4>
+                <p class="text-sm text-gray-600">Agents use specialized tools like OpenVINO adapters, calculators, and database connectors.</p>
+            </div>
+            <div class="text-center">
+                <div class="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-memory text-3xl text-purple-600"></i>
+                </div>
+                <h4 class="font-semibold text-gray-900 mb-2">Memory & Context</h4>
+                <p class="text-sm text-gray-600">Agents can remember past interactions and use context to make better decisions.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Example -->
+    <div class="mt-8 bg-gray-50 rounded-lg p-6 border border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+            <i class="fas fa-code text-blue-600 mr-2"></i>
+            Example: Creating an Agent
+        </h3>
+        <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm"><code>from aiwork.core.agent import Agent
+from aiwork.core.memory import VectorMemory
+
+# Create memory
+memory = VectorMemory()
+memory.add("User prefers detailed explanations")
+
+# Create agent
+analyst = Agent(
+    role="Financial Analyst",
+    goal="Detect fraud in transactions",
+    backstory="20 years of experience in fraud detection",
+    tools=[calculator_tool, database_tool],
+    memory=memory,
+    verbose=True
+)</code></pre>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function viewAgentDetails(agentId) {
+        alert(`Agent details for ${agentId} would be shown here.\n\nIn a full implementation, this would open a modal or navigate to a detailed agent configuration page.`);
+    }
+</script>
+{% endblock %}

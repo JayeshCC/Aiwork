@@ -26,7 +26,7 @@ IMPORTANT NOTES FOR PRODUCTION:
     - No authentication or rate limiting implemented
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from typing import Dict, Any, List
 import uuid
 import threading
@@ -262,6 +262,35 @@ def get_task_status(workflow_id: str, task_name: str):
         return jsonify({
             "error": str(e)
         }), 404
+
+
+# ═══════════════════════════════════════════════════════════════
+# UI Routes
+# ═══════════════════════════════════════════════════════════════
+
+@app.route("/ui")
+@app.route("/ui/")
+def ui_dashboard():
+    """Render the main dashboard UI."""
+    return render_template("dashboard.html")
+
+
+@app.route("/ui/workflows")
+def ui_workflows():
+    """Render the workflows management UI."""
+    return render_template("workflows.html")
+
+
+@app.route("/ui/agents")
+def ui_agents():
+    """Render the agents explorer UI."""
+    return render_template("agents.html")
+
+
+@app.route("/ui/api-explorer")
+def ui_api_explorer():
+    """Render the API explorer UI."""
+    return render_template("api_explorer.html")
 
 
 def is_port_available(port, host="0.0.0.0"):

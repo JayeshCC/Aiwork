@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AIWork{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Header -->
+    <div class="mb-8">
+        <h2>Dashboard</h2>
+        <p class="text-secondary mt-1 text-sm">Overview of your AI workflows and agents</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <div class="stat-card">
+            <div class="flex items-center">
+                <span class="icon-workflow stat-icon icon-blue"></span>
+                <div>
+                    <div class="stat-label">Total Workflows</div>
+                    <div class="stat-value" id="total-workflows">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center">
+                <span class="icon-play stat-icon icon-green"></span>
+                <div>
+                    <div class="stat-label">Active Workflows</div>
+                    <div class="stat-value" id="active-workflows">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center">
+                <span class="icon-check stat-icon icon-green"></span>
+                <div>
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="completed-workflows">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="flex items-center">
+                <span class="icon-robot stat-icon icon-purple"></span>
+                <div>
+                    <div class="stat-label">Available Agents</div>
+                    <div class="stat-value">3</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card mb-8">
+        <div class="card-body">
+            <h3 class="mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <a href="/ui/workflows/new" class="quick-action">
+                    <span class="icon icon-plus icon-blue"></span>
+                    <div>
+                        <h4>Create Workflow</h4>
+                        <p>Build a new AI workflow</p>
+                    </div>
+                </a>
+                <a href="/ui/agents" class="quick-action">
+                    <span class="icon icon-settings icon-purple"></span>
+                    <div>
+                        <h4>Configure Agent</h4>
+                        <p>Set up AI agents</p>
+                    </div>
+                </a>
+                <a href="/ui/api-explorer" class="quick-action">
+                    <span class="icon icon-terminal icon-green"></span>
+                    <div>
+                        <h4>Test API</h4>
+                        <p>Explore API endpoints</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Workflows -->
+    <div class="card">
+        <div class="card-header">
+            <div class="flex justify-between items-center">
+                <h3>Recent Workflows</h3>
+                <a href="/ui/workflows" class="text-primary text-sm">View all →</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="recent-workflows">
+                <div class="empty-state">
+                    <div class="icon icon-inbox"></div>
+                    <p>No workflows yet. Create your first workflow to get started!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let mockWorkflows = [];
+    
+    function updateStats() {
+        document.getElementById('total-workflows').textContent = mockWorkflows.length;
+        document.getElementById('active-workflows').textContent = mockWorkflows.filter(w => w.status === 'RUNNING' || w.status === 'PENDING').length;
+        document.getElementById('completed-workflows').textContent = mockWorkflows.filter(w => w.status === 'COMPLETED').length;
+    }
+    
+    function renderRecentWorkflows() {
+        const container = document.getElementById('recent-workflows');
+        if (mockWorkflows.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon icon-inbox"></div>
+                    <p>No workflows yet. Create your first workflow to get started!</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Render workflows list here when we have data
+    }
+    
+    // Initialize
+    updateStats();
+    renderRecentWorkflows();
+    
+    // Refresh every 5 seconds
+    setInterval(() => {
+        updateStats();
+        renderRecentWorkflows();
+    }, 5000);
+</script>
+{% endblock %}

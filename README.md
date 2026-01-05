@@ -177,14 +177,21 @@ amount_guard = Guardrail(
 task = Task("process", handler, guardrails=[amount_guard])
 ```
 
-### 4. REST API
-Deploy as a microservice:
+### 4. Web UI & REST API
 
+**Web Dashboard** (NEW):
 ```bash
 python -m aiwork.api.server
-# Or use the command:
-aiwork-server
+# Open browser to http://localhost:5000/ui
 ```
+
+The Web UI provides:
+- 📊 **Dashboard**: System overview and statistics
+- 🔄 **Workflows**: Create and monitor workflows visually
+- 👥 **Agents**: Explore available AI agents
+- 💻 **API Explorer**: Interactive API testing
+
+**REST API**:
 
 The server runs on http://localhost:5000 and provides the following endpoints:
 
@@ -256,6 +263,7 @@ python examples/agents/customer_support/run.py
 | [User Guide](docs/USER_GUIDE.md) | Complete tutorial and feature walkthrough |
 | [Architecture](docs/ARCHITECTURE.md) | Technical design and system internals |
 | [API Reference](docs/API_REFERENCE.md) | Detailed API documentation |
+| [UI Guide](docs/UI_GUIDE.md) | Web dashboard usage and customization |
 | [Roadmap](docs/ROADMAP.md) | Future plans and vision |
 
 ---
