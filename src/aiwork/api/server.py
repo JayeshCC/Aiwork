@@ -17,6 +17,13 @@ Endpoints:
     GET /workflow/{id} - Check workflow execution status
     GET /task/{id} - Get individual task result
     GET /health - Health check endpoint
+
+IMPORTANT NOTES FOR PRODUCTION:
+    - This is a demonstration server, NOT intended for production use
+    - Uses in-memory storage (data lost on restart)
+    - Binds to 0.0.0.0 for demonstration (use 127.0.0.1 or configure for production)
+    - Daemon threads may be forcibly killed on shutdown (use proper thread pool in production)
+    - No authentication or rate limiting implemented
 """
 
 from flask import Flask, request, jsonify
