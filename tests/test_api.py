@@ -102,8 +102,9 @@ def test_workflow_completion(client):
         response = client.get(f'/workflow/{workflow_id}')
         data = json.loads(response.data)
         if data["status"] == "COMPLETED":
-            assert "outputs" in data
-            assert "task1" in data["outputs"]
+            assert "tasks" in data
+            assert "task1" in data["tasks"]
+            assert data["tasks"]["task1"]["status"] == "COMPLETED"
             break
     else:
         pytest.fail("Workflow did not complete in time")
