@@ -1,6 +1,5 @@
 """Tests for LLM integration."""
 
-import pytest
 from aiwork.core.llm import BaseLLM, MockLLM
 from aiwork.core.agent import Agent
 
