@@ -64,6 +64,8 @@ class LocalExecutor(BaseExecutor):
                 task.status = "COMPLETED"
                 
                 duration = time.time() - start_time
+                # Metrics use "success"/"failed" labels (not task status values)
+                # to maintain compatibility with monitoring systems
                 metrics.record("task_duration_seconds", duration, {"task": task.name, "status": "success"})
                 
                 return result

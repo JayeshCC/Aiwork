@@ -168,9 +168,13 @@ class TestExecutorPattern(unittest.TestCase):
         """
         Test _run_handler is internal and works correctly.
         
-        This test intentionally calls the internal _run_handler method
-        to verify the task's core logic is separated from execution concerns.
-        In production, this method is called by executors, not directly.
+        NOTE: Testing private methods is generally not recommended.
+        This test exists specifically to validate the separation of concerns
+        in the executor pattern architecture. The _run_handler method represents
+        the core task logic that must be separated from execution concerns.
+        This test verifies that separation is working correctly.
+        
+        In production, _run_handler is called by executors, not directly.
         """
         def handler(ctx):
             return ctx.get("input", "default")
