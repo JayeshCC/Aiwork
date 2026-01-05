@@ -92,10 +92,11 @@ def test_find_available_port_range():
     for i in range(3):
         port = start_port + i
         
+        # Use default argument to capture port value correctly
         def run_server(p=port):
             app.run(host="127.0.0.1", port=p, debug=False, use_reloader=False)
         
-        thread = threading.Thread(target=run_server, daemon=True)
+        thread = threading.Thread(target=lambda p=port: run_server(p), daemon=True)
         thread.start()
         threads.append(thread)
         occupied_ports.append(port)

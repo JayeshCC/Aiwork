@@ -2,10 +2,13 @@
 Entry point for running API server as module.
 
 Usage:
-    python -m aiwork.api.server
-    python -m aiwork.api.server --port 8080
-    python -m aiwork.api.server --debug
-    python -m aiwork.api.server --auto-port
+    python -m aiwork.api
+    python -m aiwork.api --port 8080
+    python -m aiwork.api --debug
+    python -m aiwork.api --auto-port
+
+Note: The CLI argument parsing is intentionally kept separate from server.py
+to maintain independence between module invocation and direct script execution.
 """
 
 from .server import start_server
