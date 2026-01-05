@@ -308,6 +308,145 @@ pytest tests/test_integrations.py  # Integration tests
 
 ---
 
+## 🔧 Troubleshooting
+
+### Installation Issues
+
+**Problem:** `ModuleNotFoundError: No module named 'aiwork'`
+
+**Solution:** Install the package in development mode:
+```bash
+pip install -e .
+```
+
+**Problem:** `pip install` fails with dependency errors
+
+**Solution:** Upgrade pip and try again:
+```bash
+pip install --upgrade pip
+pip install -e .
+```
+
+### Examples Don't Run
+
+**Problem:** File not found errors when running examples
+
+**Solution:** Ensure you're in the repository root and use correct paths:
+```bash
+# Correct - from repository root
+python examples/quickstart.py
+python examples/agents/document_processor/run.py
+
+# Incorrect - typo with space in filename
+python examples/quickstart. py  # Note the space before 'py'
+```
+
+**Problem:** `ModuleNotFoundError` when running examples
+
+**Solution:** Install the package first:
+```bash
+pip install -e .
+python examples/quickstart.py
+```
+
+### API Server Issues
+
+**Problem:** `Connection refused` when accessing API
+
+**Solution:** Start the server first:
+```bash
+python -m aiwork.api.server
+# Server will start on http://localhost:5000
+```
+
+**Problem:** Port 5000 already in use
+
+**Solution:** Use a different port:
+```bash
+python -m aiwork.api.server --port 8080
+```
+
+Or use the command-line tool:
+```bash
+aiwork-server --port 8080
+```
+
+### Import Errors After Updates
+
+**Problem:** Import errors after pulling latest changes
+
+**Solution:** Reinstall the package:
+```bash
+pip install -e . --force-reinstall
+```
+
+### Test Failures
+
+**Problem:** Tests fail with missing dependencies
+
+**Solution:** Install test dependencies:
+```bash
+pip install pytest pytest-cov
+pytest
+```
+
+### Performance Issues
+
+**Problem:** Slow execution on CPU
+
+**Solution:** AIWork is optimized for Intel hardware. For best performance:
+1. Use Intel® Core™ or Xeon® processors
+2. Enable OpenVINO optimizations (see `docs/ARCHITECTURE.md`)
+3. Use the Intel® DevCloud for benchmarking
+
+### Common Typos and Mistakes
+
+**Problem:** File path typos
+```bash
+# Wrong - space before extension
+python examples/agents/document_processor/run. py
+
+# Wrong - wrong directory separator
+python examples\agents\document_processor\run.py  # On Linux/Mac
+
+# Correct
+python examples/agents/document_processor/run.py
+```
+
+**Problem:** Running from wrong directory
+```bash
+# Wrong - from inside example directory
+cd examples/agents/document_processor
+python run.py  # May cause import errors
+
+# Correct - from repository root
+cd /path/to/Aiwork
+python examples/agents/document_processor/run.py
+```
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. **Check the documentation:**
+   - [User Guide](docs/USER_GUIDE.md) - Complete tutorial
+   - [API Reference](docs/API_REFERENCE.md) - Detailed API docs
+   - [Architecture](docs/ARCHITECTURE.md) - Technical design
+
+2. **Check example-specific documentation:**
+   - `examples/agents/document_processor/USAGE.md` - Document processor troubleshooting
+   - `examples/agents/customer_support/README.md` - Customer support example
+
+3. **Search existing issues:**
+   - [GitHub Issues](https://github.com/JayeshCC/Aiwork/issues)
+
+4. **Ask for help:**
+   - Open a new issue with details about your problem
+   - Include error messages, Python version, and OS
+   - Provide steps to reproduce the issue
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
