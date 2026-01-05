@@ -23,6 +23,19 @@ class Task:
         input_guardrails: list = None,
         verbose: bool = False,
     ):
+        """
+        Initialize a Task, the atomic unit of work in the AIWork framework.
+
+        Args:
+            name: Human-readable name for the task.
+            description: Optional detailed description of the task. Defaults to `name` if not provided.
+            agent: Optional Agent instance responsible for executing the task.
+            handler: Callable that implements the task logic, taking a context dict and returning a result.
+            retries: Number of times to retry the task if guardrails fail.
+            guardrails: List of Guardrail objects to validate the task output after execution.
+            input_guardrails: List of Guardrail objects to validate input context before execution.
+            verbose: Boolean flag to enable detailed logging during guardrail validation.
+        """
         self.id = str(uuid.uuid4())
         self.name = name
         # Backward compatibility: allow Task(name, handler) signature.
