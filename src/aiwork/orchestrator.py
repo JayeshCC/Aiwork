@@ -59,6 +59,7 @@ class Orchestrator:
         # We use a list that can be dynamically appended to
         execution_queue = list(execution_order)
         processed_tasks = set()
+        workflow_failed = False
 
         i = 0
         while i < len(execution_queue):
@@ -105,12 +106,12 @@ class Orchestrator:
                 # Track task failure
                 self.state_manager.set_task_status(workflow_id, task.name, "FAILED", error=str(e))
                 self.state_manager.set_workflow_status(workflow_id, "FAILED", flow.name, error=str(e))
+                workflow_failed = True
                 # In a real system, handle retries or stop flow
                 break
         
         print(f"Flow {flow.name} Finished.")
-        # Only mark as COMPLETED if not already FAILED
-        current_state = self.state_manager.get_workflow_state(workflow_id)
-        if current_state["status"] != "FAILED":
+        # Only mark as COMPLETED if workflow didn't fail
+        if not workflow_failed:
             self.state_manager.set_workflow_status(workflow_id, "COMPLETED", flow.name)
         return context

@@ -106,6 +106,7 @@ class StateManager:
             raise ValueError(f"Workflow {workflow_id} not found")
         
         if task_name not in self.workflows[workflow_id]["tasks"]:
+            # Task doesn't exist yet - create with default completed status
             self.workflows[workflow_id]["tasks"][task_name] = {
                 "status": "COMPLETED",
                 "output": output,
@@ -113,7 +114,9 @@ class StateManager:
                 "updated_at": time.time()
             }
         else:
+            # Task exists - only update output, preserve existing status
             self.workflows[workflow_id]["tasks"][task_name]["output"] = output
+            self.workflows[workflow_id]["tasks"][task_name]["updated_at"] = time.time()
     
     def get_workflow_state(self, workflow_id: str) -> Dict:
         """
