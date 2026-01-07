@@ -32,6 +32,7 @@ setup(
         "pydantic>=2.0.0",
         "confluent-kafka>=2.3.0",
         "redis>=5.0.0",
+        "rich>=13.7.0",
     ],
     extras_require={
         "dev": [
@@ -47,6 +48,7 @@ setup(
     entry_points={
         "console_scripts": [
             "aiwork-server=aiwork.api.server:start_server",
+            "aiwork-tui=aiwork.tui.app:main",
         ],
     },
 )

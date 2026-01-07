@@ -177,7 +177,27 @@ amount_guard = Guardrail(
 task = Task("process", handler, guardrails=[amount_guard])
 ```
 
-### 4. REST API
+### 4. Beautiful TUI (Terminal UI)
+Monitor and manage workflows with a gorgeous terminal interface:
+
+```bash
+# Launch the TUI
+aiwork-tui
+
+# Or use the Python module
+python -m aiwork.tui
+```
+
+**Features:**
+- 🎨 Gemini-inspired aesthetics with beautiful colors
+- ⌨️ Vim-style navigation (hjkl, : commands)
+- 📊 Real-time workflow monitoring
+- 🚀 Quick actions and command palette
+- 📝 Live logs and status updates
+
+See [TUI Guide](docs/TUI_GUIDE.md) for keyboard shortcuts and usage.
+
+### 5. REST API
 Deploy as a microservice:
 
 ```bash
@@ -254,6 +274,7 @@ python examples/agents/customer_support/run.py
 | Document | Description |
 |----------|-------------|
 | [User Guide](docs/USER_GUIDE.md) | Complete tutorial and feature walkthrough |
+| [TUI Guide](docs/TUI_GUIDE.md) | Terminal UI usage and keyboard shortcuts |
 | [Architecture](docs/ARCHITECTURE.md) | Technical design and system internals |
 | [API Reference](docs/API_REFERENCE.md) | Detailed API documentation |
 | [Roadmap](docs/ROADMAP.md) | Future plans and vision |
