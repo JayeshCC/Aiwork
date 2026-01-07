@@ -26,10 +26,6 @@ try:
     from rich.align import Align
     from rich.box import ROUNDED
     from rich import box
-    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
-    from rich.syntax import Syntax
-    from rich.markdown import Markdown
-    from rich.tree import Tree
 except ImportError:
     print("❌ Error: 'rich' library is required for TUI")
     print("📦 Install it with: pip install rich")
@@ -57,6 +53,10 @@ class AIWorkTUI:
     - Command palette for quick actions
     - Vim-style navigation (hjkl, : commands)
     """
+    
+    # Demo mode constants
+    DEMO_ITERATIONS = 30  # Number of iterations in demo mode
+    VIEW_CYCLE_INTERVAL = 20  # Iterations between view changes
     
     def __init__(self):
         self.console = Console()
@@ -494,12 +494,12 @@ class AIWorkTUI:
                 # Create example workflow at start
                 self.create_example_workflow()
                 
-                for _ in range(30):  # Run for 30 iterations
+                for iteration in range(self.DEMO_ITERATIONS):
                     if not self.running:
                         break
                     
-                    # Auto-cycle views every 5 seconds
-                    if _ % 20 == 0 and _ > 0:
+                    # Auto-cycle views at configured interval
+                    if iteration % self.VIEW_CYCLE_INTERVAL == 0 and iteration > 0:
                         view_index = (view_index + 1) % len(views)
                         self.current_view = views[view_index]
                     
