@@ -28,6 +28,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "confluent-kafka>=2.3.0",
     "redis>=5.0.0",
+    "rich>=13.7.0",
 ]
 
 [project.optional-dependencies]
@@ -48,6 +49,7 @@ Issues = "https://github.com/JayeshCC/Aiwork/issues"
 
 [project.scripts]
 aiwork-server = "aiwork.api.server:start_server"
+aiwork-tui = "aiwork.tui.app:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

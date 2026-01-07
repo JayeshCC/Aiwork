@@ -4,6 +4,7 @@ pydantic>=2.0.0
 confluent-kafka==2.3.0
 pytest==7.4.3
 redis==5.0.1
+rich>=13.7.0
 
 # Optional Intel optimizations
 # openvino>=2024.0.0  # Uncomment to enable real OpenVINO support
