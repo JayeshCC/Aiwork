@@ -9,7 +9,7 @@ description = "Lightweight AI Agent Framework optimized for Intel hardware"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
-    {name = "JayeshCC", email = "jayesh@example.com"}
+    {name = "JayeshCC", email = "jayeshcc@users.noreply.github.com"}
 ]
 keywords = ["ai", "agents", "workflow", "intel", "openvino", "orchestration"]
 classifiers = [
@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
 dependencies = [
@@ -28,6 +29,7 @@ dependencies = [
     "pydantic>=2.0.0",
     "confluent-kafka>=2.3.0",
     "redis>=5.0.0",
+    "requests>=2.31.0",
 ]
 
 [project.optional-dependencies]
@@ -47,7 +49,7 @@ Repository = "https://github.com/JayeshCC/Aiwork"
 Issues = "https://github.com/JayeshCC/Aiwork/issues"
 
 [project.scripts]
-aiwork-server = "aiwork.api.server:start_server"
+aiwork-server = "aiwork.api.server:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

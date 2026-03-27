@@ -32,7 +32,7 @@ Our vision and plans for the future of AIWork framework.
 - [x] Basic observability (metrics, logging)
 
 **Integrations:**
-- [x] REST API server (FastAPI)
+- [x] REST API server (Flask)
 - [x] OpenVINO adapter interface (stub)
 - [x] Kafka adapter interface (stub)
 - [x] Airflow DAG exporter

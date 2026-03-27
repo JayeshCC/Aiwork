@@ -1,9 +1,10 @@
-from typing import List, Any, Dict, Optional, Callable
+from typing import List, Any, Dict
+
 
 class Agent:
     """
     Represents an autonomous agent with a specific role and set of tools.
-    
+
     Args:
         role: Agent's role/name
         goal: Agent's primary objective
@@ -13,15 +14,16 @@ class Agent:
         llm: LLM instance (BaseLLM) for reasoning. If None, agent uses deterministic logic.
         verbose: Enable verbose output
     """
+
     def __init__(
-        self, 
-        role: str, 
-        goal: str, 
+        self,
+        role: str,
+        goal: str,
         backstory: str,
         tools: List[Any] = None,
         memory: Any = None,
         llm: Any = None,
-        verbose: bool = True
+        verbose: bool = True,
     ):
         self.role = role
         self.goal = goal
@@ -46,32 +48,33 @@ class Agent:
             relevant_docs = self.memory.search(task_description)
             if relevant_docs:
                 print(f"    [Agent: {self.role}] Recalled {len(relevant_docs)} memories.")
-                memory_context = "\nRelevant Context:\n" + "\n".join([f"- {d['text']}" for d in relevant_docs])
+                memory_context = "\nRelevant Context:\n" + "\n".join(
+                    [f"- {d['text']}" for d in relevant_docs]
+                )
 
         # 2. Formulate Prompt (Simulation)
         # In a real LLM scenario, this prompt would be sent to the model.
-        full_prompt = f"{self.backstory}\nGoal: {self.goal}\nTask: {task_description}\n{memory_context}"
-        
+        full_prompt = (
+            f"{self.backstory}\nGoal: {self.goal}\nTask: {task_description}\n{memory_context}"
+        )
+
         # 3. Generate Response
         if self.llm:
             # Agent has LLM - use it for reasoning
             try:
                 response = self.llm.generate(full_prompt)
-                
+
                 # Store interaction in memory if available
                 if self.memory:
                     self.memory.add(
                         f"Task: {task_description}\nResponse: {response}",
-                        metadata={"role": self.role, "type": "task_execution"}
+                        metadata={"role": self.role, "type": "task_execution"},
                     )
-                
+
                 return response
             except Exception as e:
                 if self.verbose:
-                    print(
-                        f"    [Agent: {self.role}] LLM call failed "
-                        f"({type(e).__name__}): {e}"
-                    )
+                    print(f"    [Agent: {self.role}] LLM call failed " f"({type(e).__name__}): {e}")
                 # Fallback to deterministic response
                 return f"[Agent {self.role}] Task: {task_description} (LLM unavailable)"
         else:

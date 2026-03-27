@@ -1,22 +1,27 @@
-from typing import Callable, Any, Dict, Optional
+from typing import TYPE_CHECKING, Callable, Any, Dict, Optional
 import uuid
 import warnings
+
+if TYPE_CHECKING:
+    from .agent import Agent
+
 
 class Task:
     """
     Atomic unit of work in the AIWork framework.
-    
+
     Supports two-stage validation:
     - Input guardrails: Validate BEFORE execution (context/inputs)
     - Output guardrails: Validate AFTER execution (results)
-    
+
     Both are optional. Failed guardrails trigger retries.
     """
+
     def __init__(
         self,
         name: str,
         description: Optional[str] = None,
-        agent: Optional['Agent'] = None,
+        agent: Optional["Agent"] = None,
         handler: Callable[[Dict[str, Any]], Any] = None,
         retries: int = 3,
         guardrails: list = None,
@@ -57,13 +62,13 @@ class Task:
         """
         Internal method to run the task's handler or agent.
         This should be called by the executor, not directly.
-        
+
         Args:
             context: Execution context with workflow state
-            
+
         Returns:
             Task execution result
-            
+
         Raises:
             ValueError: If task has no handler and no agent
         """
@@ -78,26 +83,27 @@ class Task:
             result = self.handler(context)
         else:
             raise ValueError(f"Task {self.name} has no Agent and no Handler.")
-        
+
         return result
 
     def execute(self, context: Dict[str, Any]) -> Any:
         """
         Executes the task with retry logic and guardrails.
-        
+
         DEPRECATED: This method is deprecated. Use an Orchestrator with an Executor instead.
         The orchestrator will handle task execution through the executor pattern.
-        
+
         This method is kept for backward compatibility and will be removed in a future version.
         """
         warnings.warn(
             "Task.execute() is deprecated. Use Orchestrator with an Executor instead. "
             "Example: orchestrator.execute(flow, context)",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
-        
+
         # Use LocalExecutor for backward compatibility
         from aiwork.executors.local_executor import LocalExecutor
+
         executor = LocalExecutor()
         return executor.execute(self, context)

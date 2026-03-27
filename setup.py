@@ -7,7 +7,7 @@ setup(
     name="aiwork",
     version="0.1.0",
     author="JayeshCC",
-    author_email="jayesh@example.com",  # Use placeholder
+    author_email="jayeshcc@users.noreply.github.com",
     description="Lightweight AI Agent Framework optimized for Intel hardware",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -23,15 +23,16 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     python_requires=">=3.8",
     install_requires=[
-        "fastapi>=0.104.0",
-        "uvicorn>=0.24.0",
+        "flask>=3.0.0",
         "numpy>=1.26.0",
         "pydantic>=2.0.0",
         "confluent-kafka>=2.3.0",
         "redis>=5.0.0",
+        "requests>=2.31.0",
     ],
     extras_require={
         "dev": [
@@ -46,7 +47,7 @@ setup(
     },
     entry_points={
         "console_scripts": [
-            "aiwork-server=aiwork.api.server:start_server",
+            "aiwork-server=aiwork.api.server:main",
         ],
     },
 )

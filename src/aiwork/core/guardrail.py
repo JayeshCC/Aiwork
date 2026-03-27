@@ -1,9 +1,11 @@
-from typing import Any, Callable, Optional
+from typing import Any, Callable
+
 
 class Guardrail:
     """
     Enforces safety and validation policies on Task inputs and outputs.
     """
+
     def __init__(self, name: str, validator: Callable[[Any], bool], description: str = ""):
         self.name = name
         self.validator = validator

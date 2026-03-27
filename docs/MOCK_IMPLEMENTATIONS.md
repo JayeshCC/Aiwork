@@ -18,7 +18,7 @@ AIWork v0.1.0 is designed with **intentional architectural choices** that balanc
 | Component | Status | Ready for Production | Notes |
 |-----------|--------|---------------------|-------|
 | **Core Framework** | ✅ Production | Yes | Agent, Task, Flow, Orchestrator |
-| **REST API** | ✅ Production | Yes | FastAPI-based API server |
+| **REST API** | ✅ Production | Yes | Flask-based API server |
 | **Vector Memory** | ✅ Production | Yes | TF-IDF based memory system |
 | **Guardrails** | ✅ Production | Yes | Validation framework |
 | **Observability** | ✅ Production | Yes | Metrics and logging |
@@ -216,7 +216,7 @@ These components are **fully implemented and tested** for production use:
 
 ### 2. REST API Server
 
-**Component**: FastAPI-based HTTP API
+**Component**: Flask-based HTTP API
 
 **Status**: ✅ **Production Ready**
 
@@ -228,7 +228,7 @@ These components are **fully implemented and tested** for production use:
 - Error handling and proper HTTP status codes
 - API documentation (Swagger/ReDoc)
 
-**Confidence**: 🟢 High - Standard FastAPI patterns
+**Confidence**: 🟢 High - Standard Flask patterns
 
 ---
 

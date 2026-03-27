@@ -577,7 +577,7 @@ This project is built for the **Intel AI Innovation Challenge 2025-26 - Problem 
 
 **Production-Ready Components:**
 - ✅ Core framework (Agent, Task, Flow, Orchestrator)
-- ✅ REST API server (FastAPI)
+- ✅ REST API server (Flask)
 - ✅ Memory system (VectorMemory)
 - ✅ Guardrails framework
 - ✅ Observability (metrics, logging)
@@ -600,7 +600,7 @@ This transparent approach demonstrates:
 ## 🙏 Acknowledgments
 
 Built with:
-- **FastAPI** for REST API
+- **Flask** for REST API
 - **Apache Kafka** for messaging
 - **Apache Airflow** for DAG export
 

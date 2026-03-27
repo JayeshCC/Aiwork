@@ -102,16 +102,16 @@ Provides multiple entry points for submitting work to the framework.
 **Components:**
 
 #### REST API (`src/aiwork/api/server.py`)
-- **Technology**: FastAPI
+- **Technology**: Flask
 - **Purpose**: HTTP interface for remote flow execution
 - **Endpoints**:
-  - `GET /`: Health check
-  - `POST /execute`: Execute flow with JSON definition
+  - `GET /health`: Health check
+  - `POST /workflow`: Submit workflow with JSON definition
 - **Use Case**: Microservice deployment, web integrations
 
 ```python
 # REST API Flow
-Client → POST /execute → FastAPI → Orchestrator → Results
+Client → POST /workflow → Flask API → Orchestrator → Results
 ```
 
 #### Kafka Adapter (`src/aiwork/integrations/kafka_adapter.py`)

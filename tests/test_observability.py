@@ -1,13 +1,16 @@
 import pytest
 
 from aiwork.core.observability import MetricsRegistry, metrics
-from aiwork.observability.logger import Logger, monitor
+from aiwork.observability import Logger, monitor
+from aiwork.observability import MetricsRegistry as ExportedMetricsRegistry
+from aiwork.observability import metrics as exported_metrics
 
 
 def test_metrics_registry_is_singleton():
     r1 = MetricsRegistry()
     r2 = MetricsRegistry()
     assert r1 is r2
+    assert ExportedMetricsRegistry is MetricsRegistry
 
 
 def test_metrics_record_and_summary():
@@ -17,6 +20,7 @@ def test_metrics_record_and_summary():
     assert len(summary) == 1
     assert summary[0]["name"] == "task_duration_seconds"
     assert summary[0]["value"] == 1.23
+    assert exported_metrics is metrics
 
 
 def test_logger_info_and_monitor_success(caplog):

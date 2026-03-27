@@ -26,15 +26,16 @@ IMPORTANT NOTES FOR PRODUCTION:
     - No authentication or rate limiting implemented
 """
 
+import argparse
 from flask import Flask, request, jsonify
-from typing import Dict, Any, List
+from typing import Dict, Any, Sequence
 import uuid
 import threading
 import sys
 import os
 
 # Add src to path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 
 from aiwork.core.task import Task
 from aiwork.core.flow import Flow
@@ -63,7 +64,7 @@ def execute_workflow_async(workflow_id: str, flow: Flow, initial_context: Dict[s
         # Execute workflow (this is the long-running operation)
         # Pass the workflow_id so orchestrator uses it for tracking
         orchestrator.execute(flow, initial_context, workflow_id=workflow_id)
-    
+
     except Exception as e:
         # Error tracking is already handled by orchestrator's StateManager
         # Just log for debugging
@@ -76,18 +77,14 @@ def health_check():
     Health check endpoint.
     Returns the status of the API server.
     """
-    return jsonify({
-        "status": "healthy",
-        "framework": "AIWork",
-        "version": "0.1.0"
-    }), 200
+    return jsonify({"status": "healthy", "framework": "AIWork", "version": "0.1.0"}), 200
 
 
 @app.route("/workflow", methods=["POST"])
 def submit_workflow():
     """
     Submit a new workflow for execution.
-    
+
     Request body should contain:
     {
         "name": "workflow_name",
@@ -99,7 +96,7 @@ def submit_workflow():
         ],
         "context": {}  # Optional initial context
     }
-    
+
     Returns:
     {
         "id": "workflow-uuid",
@@ -108,67 +105,65 @@ def submit_workflow():
     """
     try:
         data = request.get_json()
-        
+
         if not data or "name" not in data or "tasks" not in data:
-            return jsonify({
-                "error": "Invalid request. 'name' and 'tasks' are required."
-            }), 400
-        
+            return jsonify({"error": "Invalid request. 'name' and 'tasks' are required."}), 400
+
         workflow_name = data["name"]
         tasks_data = data["tasks"]
         initial_context = data.get("context", {})
-        
+
         # Create workflow ID
         workflow_id = str(uuid.uuid4())
-        
+
         # Create Flow
         flow = Flow(workflow_name)
-        
+
         # Generic handler for tasks (in production, look up from registry)
         def generic_handler(ctx):
             return {"status": "executed"}
-        
+
         # Add tasks to flow
         for task_data in tasks_data:
             task_name = task_data.get("name")
             depends_on = task_data.get("depends_on", [])
-            
+
             if not task_name:
-                return jsonify({
-                    "error": "Each task must have a 'name' field."
-                }), 400
-            
+                return jsonify({"error": "Each task must have a 'name' field."}), 400
+
             task = Task(task_name, generic_handler)
             flow.add_task(task, depends_on=depends_on)
-        
+
         # Initialize workflow state in StateManager
         state_manager.set_workflow_status(workflow_id, "PENDING", workflow_name)
-        
+
         # Execute workflow asynchronously
         thread = threading.Thread(
-            target=execute_workflow_async,
-            args=(workflow_id, flow, initial_context)
+            target=execute_workflow_async, args=(workflow_id, flow, initial_context)
         )
         thread.daemon = True
         thread.start()
-        
-        return jsonify({
-            "id": workflow_id,
-            "status": "PENDING",
-            "message": "Workflow submitted successfully"
-        }), 201
-    
+
+        return (
+            jsonify(
+                {
+                    "id": workflow_id,
+                    "status": "PENDING",
+                    "message": "Workflow submitted successfully",
+                }
+            ),
+            201,
+        )
+
     except Exception as e:
-        return jsonify({
-            "error": f"Failed to submit workflow: {str(e)}"
-        }), 500
+        return jsonify({"error": f"Failed to submit workflow: {str(e)}"}), 500
 
 
 @app.route("/workflow/<workflow_id>", methods=["GET"])
 def get_workflow_status(workflow_id: str):
     """
     Check workflow execution status from StateManager.
-    
+
     Returns:
     {
         "id": "workflow-uuid",
@@ -185,33 +180,31 @@ def get_workflow_status(workflow_id: str):
     """
     try:
         state = state_manager.get_workflow_state(workflow_id)
-        
+
         response = {
             "id": workflow_id,
             "name": state["name"],
             "status": state["status"],
-            "tasks": state["tasks"]
+            "tasks": state["tasks"],
         }
-        
+
         if state.get("error"):
             response["error"] = state["error"]
-        
+
         return jsonify(response), 200
-    
-    except ValueError as e:
-        return jsonify({
-            "error": f"Workflow {workflow_id} not found"
-        }), 404
+
+    except ValueError:
+        return jsonify({"error": f"Workflow {workflow_id} not found"}), 404
 
 
 @app.route("/task/<task_id>", methods=["GET"])
 def get_task_result(task_id: str):
     """
     Get individual task result (legacy endpoint using task_store).
-    
+
     Note: This endpoint is for backward compatibility.
     Use /workflow/<workflow_id>/task/<task_name> for new integrations.
-    
+
     Returns:
     {
         "id": "task-uuid",
@@ -223,12 +216,10 @@ def get_task_result(task_id: str):
     """
     with store_lock:
         if task_id not in task_store:
-            return jsonify({
-                "error": f"Task {task_id} not found"
-            }), 404
-        
+            return jsonify({"error": f"Task {task_id} not found"}), 404
+
         task = task_store[task_id]
-    
+
     return jsonify(task), 200
 
 
@@ -236,7 +227,7 @@ def get_task_result(task_id: str):
 def get_task_status(workflow_id: str, task_name: str):
     """
     Get status of specific task within a workflow from StateManager.
-    
+
     Returns:
     {
         "workflow_id": "...",
@@ -250,23 +241,27 @@ def get_task_status(workflow_id: str, task_name: str):
         status = state_manager.get_task_status(workflow_id, task_name)
         state = state_manager.get_workflow_state(workflow_id)
         task_data = state["tasks"].get(task_name, {})
-        
-        return jsonify({
-            "workflow_id": workflow_id,
-            "task_name": task_name,
-            "status": status,
-            "output": task_data.get("output"),
-            "error": task_data.get("error")
-        }), 200
+
+        return (
+            jsonify(
+                {
+                    "workflow_id": workflow_id,
+                    "task_name": task_name,
+                    "status": status,
+                    "output": task_data.get("output"),
+                    "error": task_data.get("error"),
+                }
+            ),
+            200,
+        )
     except ValueError as e:
-        return jsonify({
-            "error": str(e)
-        }), 404
+        return jsonify({"error": str(e)}), 404
 
 
 def is_port_available(port, host="0.0.0.0"):
     """Check if port is available for binding."""
     import socket
+
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((host, port))
@@ -283,28 +278,71 @@ def find_available_port(start_port=5000, max_attempts=10, host="0.0.0.0"):
     return None
 
 
+def build_parser():
+    """Build the CLI parser for all API entry points."""
+    parser = argparse.ArgumentParser(
+        prog="aiwork-server",
+        description="AIWork API Server",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=5000,
+        help="Port to bind to (default: 5000)",
+    )
+    parser.add_argument(
+        "--host",
+        default="0.0.0.0",
+        help="Host to bind to (default: 0.0.0.0)",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode",
+    )
+    parser.add_argument(
+        "--auto-port",
+        action="store_true",
+        help="Automatically find an available port if the requested port is busy",
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None):
+    """
+    Shared CLI entry point for `python -m aiwork.api` and `aiwork-server`.
+    """
+    args = build_parser().parse_args(argv)
+    start_server(
+        host=args.host,
+        port=args.port,
+        debug=args.debug,
+        auto_port=args.auto_port,
+    )
+
+
 def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
     """
     Start the Flask API server.
-    
+
     Args:
         host: Host to bind to (default: 0.0.0.0 for external access)
-              WARNING: 0.0.0.0 binds to all network interfaces. 
+              WARNING: 0.0.0.0 binds to all network interfaces.
               For production, use 127.0.0.1 or a specific IP.
         port: Port to bind to (default: 5000)
         debug: Enable Flask debug mode (default: False)
                WARNING: Never enable debug mode in production as it allows
                arbitrary code execution via the debugger.
         auto_port: Automatically find available port if specified port is taken
-    
+
     Usage:
         # From command line
         python -m aiwork.api
-        
+
         # Programmatically
         from aiwork.api.server import start_server
         start_server(port=8080)
-    
+
     Security Notes:
         - This is a development server, not intended for production
         - Use a production WSGI server (gunicorn, uwsgi) for production
@@ -324,25 +362,25 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
                 raise OSError(f"Port {port} is already in use and no alternatives found")
         else:
             raise OSError(f"Port {port} is already in use. Use --auto-port to find alternative.")
-    
+
     print(f"🚀 Starting AIWork API Server on http://{host}:{port}")
-    print(f"📋 Available endpoints:")
-    print(f"   • GET  /health              - Health check")
-    print(f"   • POST /workflow            - Submit workflow")
-    print(f"   • GET  /workflow/<id>       - Get workflow status")
-    print(f"   • GET  /workflow/<id>/task/<name> - Get task status")
-    
+    print("📋 Available endpoints:")
+    print("   • GET  /health              - Health check")
+    print("   • POST /workflow            - Submit workflow")
+    print("   • GET  /workflow/<id>       - Get workflow status")
+    print("   • GET  /workflow/<id>/task/<name> - Get task status")
+
     if debug:
-        print(f"\n⚠️  WARNING: Debug mode is ENABLED")
-        print(f"   This should NEVER be used in production!")
-        print(f"   Debug mode allows arbitrary code execution via the debugger.")
-    
+        print("\n⚠️  WARNING: Debug mode is ENABLED")
+        print("   This should NEVER be used in production!")
+        print("   Debug mode allows arbitrary code execution via the debugger.")
+
     if host == "0.0.0.0":
-        print(f"\n⚠️  INFO: Server is binding to all network interfaces (0.0.0.0)")
-        print(f"   For production, use 127.0.0.1 or a specific IP address.")
-    
-    print(f"\n💡 Press Ctrl+C to stop")
-    
+        print("\n⚠️  INFO: Server is binding to all network interfaces (0.0.0.0)")
+        print("   For production, use 127.0.0.1 or a specific IP address.")
+
+    print("\n💡 Press Ctrl+C to stop")
+
     try:
         # Security note: Flask development server is not suitable for production.
         # The debug parameter is explicitly controlled by user input (defaults to False).
@@ -358,44 +396,4 @@ def start_server(host="0.0.0.0", port=5000, debug=False, auto_port=False):
 
 
 if __name__ == "__main__":
-    import sys
-    
-    # Simple CLI argument parsing
-    host = "0.0.0.0"
-    port = 5000
-    debug = False
-    auto_port = False
-    
-    args = sys.argv[1:]
-    i = 0
-    
-    while i < len(args):
-        if args[i] == "--port" and i + 1 < len(args):
-            try:
-                port = int(args[i + 1])
-                i += 2
-            except ValueError:
-                print("❌ Invalid port. Usage: python -m aiwork.api --port 8080")
-                sys.exit(1)
-        elif args[i] == "--debug":
-            debug = True
-            i += 1
-        elif args[i] == "--auto-port":
-            auto_port = True
-            i += 1
-        elif args[i] in ["-h", "--help"]:
-            print("AIWork API Server")
-            print("\nUsage:")
-            print("  python -m aiwork.api [options]")
-            print("\nOptions:")
-            print("  --port PORT     Port to bind to (default: 5000)")
-            print("  --debug         Enable debug mode")
-            print("  --auto-port     Automatically find available port if specified port is taken")
-            print("  -h, --help      Show this help message")
-            sys.exit(0)
-        else:
-            print(f"❌ Unknown argument: {args[i]}")
-            print("Run with --help for usage information")
-            sys.exit(1)
-    
-    start_server(host=host, port=port, debug=debug, auto_port=auto_port)
+    main(sys.argv[1:])

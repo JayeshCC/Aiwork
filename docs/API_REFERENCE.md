@@ -1383,7 +1383,7 @@ except Exception as e:
 ## Version Compatibility
 
 - **Python**: 3.8+
-- **FastAPI**: 0.104.1+
+- **Flask**: 3.0.0+
 - **NumPy**: 1.26.2+
 
 For optional integrations:
