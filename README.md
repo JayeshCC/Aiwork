@@ -10,7 +10,7 @@ The repository is a portfolio project and reference implementation. It is not pr
 - Sequential task execution with dynamic task injection through `next_tasks`
 - `Agent`, `Task`, `Flow`, and `Orchestrator` abstractions
 - Function-based tools and a reusable `ToolRegistry`
-- Lightweight local `VectorMemory` using word-overlap similarity
+- Lightweight local memory using word-overlap similarity
 - Input and output guardrails with retry handling
 - In-memory workflow and task state tracking
 - A local Flask demonstration API
@@ -160,7 +160,8 @@ The Intel-related adapter and benchmark work remains alpha-stage. See [Mock Impl
 - [User Guide](docs/USER_GUIDE.md)
 - [Mock Implementations](docs/MOCK_IMPLEMENTATIONS.md)
 - [Roadmap](docs/ROADMAP.md)
-- [Extension Guide](docs/PRODUCTION_GUIDE.md)
+- [Extension Guide](docs/EXTENSION_GUIDE.md)
+- [Challenge Brief](docs/CHALLENGE_BRIEF.md)
 
 ## Project Structure
 

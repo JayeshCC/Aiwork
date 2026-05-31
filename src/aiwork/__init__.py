@@ -1,8 +1,7 @@
 """
 AIWork: Lightweight AI Agent Framework
 
-A production-ready Python framework for orchestrating AI agent workflows,
-optimized for Intel hardware.
+An alpha-stage framework for local agentic workflow experiments.
 """
 
 __version__ = "0.1.0"

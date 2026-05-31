@@ -101,7 +101,7 @@ When you run the example successfully, you should see:
 📋 Features Demonstrated:
    • Agent-Centric Architecture
    • Hybrid Orchestration (Dynamic Task Injection)
-   • OpenVINO Hardware Acceleration
+   • Simulated OpenVINO adapter placeholder
    • Guardrail Validation
    • Multi-Agent Collaboration
 
@@ -121,7 +121,7 @@ Starting Flow: finance_pipeline
   Executing Task: ocr_task...
     > Assigned to Agent: Document Processor
     [OCR] Processing document: uploads/invoice_nov.pdf
-    [OCR] Using OpenVINO acceleration for fast inference...
+    [OCR] Simulating OCR behind the OpenVINO adapter placeholder...
     [OCR] ✅ Successfully extracted 66 characters
   Task ocr_task Completed.
   
@@ -172,7 +172,7 @@ Flow finance_pipeline Finished.
    • Hybrid orchestration enables adaptive workflows
    • Agents collaborate to process complex documents
    • Guardrails ensure data quality at each step
-   • OpenVINO provides hardware acceleration
+   • OpenVINO behavior is simulated in this reference workflow
 ```
 
 ## Customization
@@ -295,7 +295,7 @@ The document processor demonstrates key AIWork features:
 ### 1. Multi-Agent Collaboration
 
 Three specialized agents work together:
-- **Document Processor**: OCR extraction using OpenVINO
+- **Document Processor**: Simulated OCR behind an OpenVINO adapter boundary
 - **Financial Analyst**: Invoice analysis and risk assessment
 - **Compliance Officer**: Regulatory audit for high-value transactions
 
@@ -322,7 +322,7 @@ Agents use tools for specialized capabilities:
 ```python
 ocr_agent = Agent(
     role="Document Processor",
-    tools=[ov_adapter]  # OpenVINO for hardware acceleration
+    tools=[ov_adapter]  # Placeholder adapter; no real acceleration
 )
 ```
 

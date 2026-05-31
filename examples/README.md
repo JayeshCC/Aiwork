@@ -86,7 +86,7 @@ python examples/airflow_export_demo.py
 **What it does:** Intelligent invoice processing with OCR, analysis, and compliance checking.
 
 **Technologies:**
-- OpenVINO-accelerated OCR
+- Simulated OCR with an OpenVINO adapter placeholder
 - Dynamic task injection (hybrid orchestration)
 - Guardrail validation
 - Error handling with retries
@@ -100,7 +100,7 @@ Upload Invoice → OCR Extraction → Data Analysis → [Dynamic: Compliance Aud
 - **Hybrid Orchestration:** Dynamically injects compliance audit task for high-value invoices
 - **Guardrails:** Validates positive amounts
 - **Agent Memory:** Remembers vendor patterns
-- **OpenVINO:** 3.7x faster OCR inference (when real OpenVINO is enabled)
+- **OpenVINO adapter:** Placeholder interface only; no acceleration is enabled or measured
 
 **Run:**
 ```bash

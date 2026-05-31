@@ -8,7 +8,7 @@ setup(
     version="0.1.0",
     author="JayeshCC",
     author_email="jayeshcc@users.noreply.github.com",
-    description="Lightweight AI Agent Framework optimized for Intel hardware",
+    description="Alpha-stage framework for local agentic workflow experiments",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/JayeshCC/Aiwork",
@@ -30,8 +30,6 @@ setup(
         "flask>=3.0.0",
         "numpy>=1.26.0",
         "pydantic>=2.0.0",
-        "confluent-kafka>=2.3.0",
-        "redis>=5.0.0",
         "requests>=2.31.0",
     ],
     extras_require={
@@ -43,6 +41,10 @@ setup(
         ],
         "intel": [
             "openvino>=2024.0.0",
+        ],
+        "integrations": [
+            "confluent-kafka>=2.3.0",
+            "redis>=5.0.0",
         ],
     },
     entry_points={

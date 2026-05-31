@@ -16,7 +16,7 @@ class Memory:
 
 class VectorMemory(Memory):
     """
-    A lightweight, local vector memory implementation.
+    A lightweight local memory implementation.
     Uses simple word overlap (Jaccard similarity) for demonstration to avoid heavy dependencies.
     In production, this would use proper embeddings (e.g., OpenVINO quantized models).
     """

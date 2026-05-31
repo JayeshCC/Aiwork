@@ -587,7 +587,6 @@ class SemanticMemory:
 # Commands
 aiwork init my-project
 aiwork run workflow.yaml
-aiwork deploy --docker
 aiwork benchmark
 ```
 

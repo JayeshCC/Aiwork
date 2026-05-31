@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "aiwork"
 version = "0.1.0"
-description = "Lightweight AI Agent Framework optimized for Intel hardware"
+description = "Alpha-stage framework for local agentic workflow experiments"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
@@ -27,8 +27,6 @@ dependencies = [
     "flask>=3.0.0",
     "numpy>=1.26.0",
     "pydantic>=2.0.0",
-    "confluent-kafka>=2.3.0",
-    "redis>=5.0.0",
     "requests>=2.31.0",
 ]
 
@@ -41,6 +39,10 @@ dev = [
 ]
 intel = [
     "openvino>=2024.0.0",
+]
+integrations = [
+    "confluent-kafka>=2.3.0",
+    "redis>=5.0.0",
 ]
 
 [project.urls]

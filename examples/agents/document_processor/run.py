@@ -3,7 +3,7 @@ AIWork Document Processor Agent
 ================================
 
 This example demonstrates a sophisticated document processing pipeline:
-- OpenVINO-accelerated OCR for text extraction
+- Simulated OCR with an OpenVINO adapter placeholder
 - Financial data analysis and risk assessment
 - Dynamic task injection (hybrid orchestration)
 - Guardrail validation for data quality
@@ -63,7 +63,7 @@ def progress(steps, tone=GREEN, delay=0.06):
 # STEP 1: Initialize OpenVINO Adapter (Tool)
 # ═══════════════════════════════════════════════════════════════
 
-# OpenVINO provides hardware-accelerated inference for AI models
+# Placeholder boundary for a future real OpenVINO integration
 # In production, replace with actual model path
 ov_adapter = OpenVINOAdapter(model_path="models/ocr_model.xml")
 
@@ -103,9 +103,9 @@ amount_guardrail = Guardrail(
 
 ocr_agent = Agent(
     role="Document Processor",
-    goal="Extract accurate text from documents using OpenVINO",
+    goal="Demonstrate simulated OCR behind an OpenVINO adapter boundary",
     backstory="An optimized AI specialist running on Intel hardware with 99.2% OCR accuracy.",
-    tools=[ov_adapter]  # Equipped with OpenVINO for fast inference
+    tools=[ov_adapter]  # Placeholder adapter; no real inference
 )
 
 analyst_agent = Agent(
@@ -127,12 +127,12 @@ compliance_agent = Agent(
 
 def ocr_extract(ctx):
     """
-    Extract text from invoice using OpenVINO-optimized OCR.
+    Extract text from an invoice using simulated OCR.
     
     In production, this would:
     - Load invoice image from path
     - Preprocess image (resize, denoise)
-    - Run OpenVINO inference for 3.7x speedup
+    - Demonstrate an OpenVINO adapter placeholder without measured acceleration
     - Post-process OCR results
     
     Args:
@@ -149,13 +149,13 @@ def ocr_extract(ctx):
         [
             "Loading invoice image",
             "Normalizing scan",
-            "Running OpenVINO inference",
+            "Simulating OpenVINO adapter call",
             "Assembling extracted text",
         ],
         tone=CYAN,
     )
     
-    # Simulate OpenVINO inference (in production, this runs actual model)
+    # Simulate OCR behind the placeholder adapter boundary.
     ov_adapter.infer({"image": "doc_image_tensor"})
     
     # Simulated OCR result
@@ -275,7 +275,7 @@ def main():
     print(color("Features Demonstrated:", BOLD + WHITE))
     print(color("   • Agent-Centric Architecture", WHITE))
     print(color("   • Hybrid Orchestration (Dynamic Task Injection)", WHITE))
-    print(color("   • OpenVINO Hardware Acceleration", WHITE))
+    print(color("   • Simulated OpenVINO Adapter Placeholder", WHITE))
     print(color("   • Guardrail Validation", WHITE))
     print(color("   • Multi-Agent Collaboration\n", WHITE))
     print("─" * 60 + "\n")
@@ -368,7 +368,7 @@ def main():
         print(color("   • Hybrid orchestration enables adaptive workflows", WHITE))
         print(color("   • Agents collaborate to process complex documents", WHITE))
         print(color("   • Guardrails ensure data quality at each step", WHITE))
-        print(color("   • OpenVINO provides hardware acceleration", WHITE))
+        print(color("   • OpenVINO adapter behavior is simulated in this reference workflow", WHITE))
         
         print("\n" + "─" * 60)
         print(color("Next Steps:", BOLD + WHITE))

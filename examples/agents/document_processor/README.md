@@ -14,9 +14,9 @@ This reference agent demonstrates a real-world use case: processing financial in
 
 ## Features
 
-### 1. OpenVINO-Accelerated OCR
+### 1. Simulated OCR with an OpenVINO Adapter Placeholder
 - Extracts text from invoice images
-- Uses Intel OpenVINO for 3.7x faster inference (when enabled)
+- Demonstrates where OpenVINO inference could be integrated; no acceleration is enabled or measured
 - Handles multiple image formats
 
 ### 2. Intelligent Analysis
@@ -49,7 +49,7 @@ This reference agent demonstrates a real-world use case: processing financial in
 └────────┬────────┘
          ↓
 ┌─────────────────┐
-│  OCR Extraction │  ← OpenVINO accelerated
+│  OCR Extraction │  ← simulated adapter placeholder
 └────────┬────────┘
          ↓
 ┌─────────────────┐
@@ -295,14 +295,14 @@ ov_ocr = OpenVINOAdapter("models/ocr_model.xml")
 
 def ocr_handler_optimized(ctx):
     image = ctx["image"]
-    result = ov_ocr.infer({"image": image})  # 3.7x faster!
+    result = ov_ocr.infer({"image": image})  # Simulated placeholder only
     return {"text": result["text"]}
 ```
 
 **Performance Comparison:**
 - Baseline (PyTorch/ONNX): 156ms per image
-- With OpenVINO: 42ms per image
-- **Speedup: 3.7x** ✅
+- OpenVINO adapter timings: not measured
+- **Acceleration:** not enabled
 
 ---
 
